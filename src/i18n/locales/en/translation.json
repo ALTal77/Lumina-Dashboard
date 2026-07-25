@@ -1,0 +1,804 @@
+{
+  "app": {
+    "title": "Lumina Health Dashboard"
+  },
+  "role": {
+    "admin": "Admin",
+    "doctor": "Doctor",
+    "patient": "Patient"
+  },
+  "nav": {
+    "patient": {
+      "dashboard": "Dashboard",
+      "departments": "Browse Departments",
+      "doctors": "Find Doctors",
+      "appointments": "My Appointments",
+      "messages": "Messages / Inbox",
+      "profile": "Profile & Settings"
+    },
+    "doctor": {
+      "dashboard": "Dashboard",
+      "appointments": "Appointment Requests",
+      "schedule": "Weekly Schedule",
+      "patients": "Patient Records",
+      "messages": "Messages / Inbox",
+      "profile": "Profile & Settings"
+    },
+    "admin": {
+      "dashboard": "System Overview",
+      "doctors": "Manage Doctors",
+      "departments": "Departments",
+      "appointments": "Monitor Appointments",
+      "patients": "Manage Patients",
+      "payments": "Revenue & Payments",
+      "reports": "Reports & Analytics",
+      "settings": "System Settings"
+    }
+  },
+  "sidebar": {
+    "logoAlt": "Lumina Health",
+    "logoFallback": "LH",
+    "brandName": "Lumina Health",
+    "version": "Hospital System v2.4",
+    "badge": {
+      "admin": "Admin Core",
+      "doctor": "Clinical Portal",
+      "patient": "Patient Workspace"
+    },
+    "userAccount": "Account",
+    "logoutTooltip": "Sign out / Switch user"
+  },
+  "pageTitle": {
+    "fallback": "Hospital Management System",
+    "patient": {
+      "dashboard": "Patient Portal Overview",
+      "departments": "Medical Departments",
+      "doctors": "Find & Book Doctors",
+      "appointments": "My Appointments & History",
+      "messages": "Patient Inbox & Consultations",
+      "profile": "Patient Profile & Settings"
+    },
+    "doctor": {
+      "dashboard": "Clinical Dashboard",
+      "appointments": "Appointment Requests",
+      "schedule": "Weekly Availability Schedule",
+      "patients": "Patient Health Records",
+      "messages": "Doctor Global Messages",
+      "profile": "Doctor Profile & Credentials"
+    },
+    "admin": {
+      "dashboard": "System Control Dashboard",
+      "doctors": "Manage Medical Staff",
+      "departments": "Manage Hospital Departments",
+      "appointments": "Monitor Hospital Appointments",
+      "patients": "Manage Registered Patients",
+      "payments": "Financial & Revenue Tracker",
+      "reports": "Analytics & System Reports",
+      "settings": "Hospital System Configuration"
+    }
+  },
+  "navbar": {
+    "logoAlt": "Lumina Health",
+    "statusLabel": "Status:",
+    "statusOperational": "Operational",
+    "direction": {
+      "tooltip": "Switch layout direction (Currently: {{dir}})",
+      "ltr": "LTR",
+      "rtl": "RTL (العربية)"
+    },
+    "notifications": {
+      "heading": "Notifications",
+      "empty": "No notifications.",
+      "now": "Now"
+    },
+    "roleSwitch": {
+      "admin": "Admin",
+      "doctor": "Doctor",
+      "patient": "Patient"
+    }
+  },
+  "footer": {
+    "systemState": "Real-time System State Active",
+    "mockDataMode": "Mock Data Mode — No Network Calls",
+    "brand": "Lumina Health System",
+    "separator": "•",
+    "roleView": "{{role}} View"
+  },
+  "status": {
+    "confirmed": "Confirmed",
+    "active": "Active",
+    "completed": "Completed",
+    "pending": "Pending",
+    "rejected": "Rejected",
+    "cancelled": "Cancelled",
+    "closed": "Closed",
+    "maintenance": "Maintenance",
+    "suspended": "Suspended",
+    "paid": "Paid",
+    "unpaid": "Unpaid",
+    "refunded": "Refunded"
+  },
+  "dataTable": {
+    "search": {
+      "placeholder": "Search records..."
+    },
+    "empty": {
+      "message": "No matching records found."
+    },
+    "actions": {
+      "header": "Actions"
+    },
+    "pagination": {
+      "showing": "Showing",
+      "to": "to",
+      "of": "of",
+      "entries": "entries"
+    }
+  },
+  "fileUpload": {
+    "label": {
+      "default": "Upload Profile Picture / Document"
+    },
+    "defaultFileName": "Existing File.jpg",
+    "defaultFileSize": "1.2 MB",
+    "image": {
+      "alt": "Preview"
+    },
+    "status": {
+      "ready": "Ready"
+    },
+    "dropZone": {
+      "dragAndDrop": "Drag & drop or ",
+      "browse": "browse",
+      "supportedFormats": "Supports PNG, JPG, PDF up to 5MB"
+    },
+    "sizeUnit": "MB"
+  },
+  "timeSlotPicker": {
+    "empty": {
+      "message": "No time slots available for this date."
+    },
+    "timeSeparator": " - "
+  },
+  "avatar": {
+    "initialsFallback": "?"
+  },
+  "login": {
+    "brandAbbreviation": "H+",
+    "brandName": "MediControl",
+    "brandSubtitle": "Hospital Appointment Management System",
+    "switchToRtl": "Switch to RTL (العربية)",
+    "switchToLtr": "Switch to LTR",
+    "badge": "Unified Multi-Role Dashboard",
+    "title": "Select Your Portal to Enter",
+    "subtitle": "Experience the system as a Patient, Doctor, or System Administrator with pre-configured mock states.",
+    "form": {
+      "welcome": "Sign in to Lumina Health",
+      "emailLabel": "Email Address",
+      "emailPlaceholder": "Enter your email address",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "Enter your password",
+      "submit": "Sign In",
+      "error": "Invalid email or password. Please try again.",
+      "demoHint": "Demo: admin@lumina.com / admin123"
+    },
+    "patientCard": {
+      "badge": "Consumer Booking View",
+      "title": "Patient Portal",
+      "description": "Browse departments, view doctor bios, pick available time slots, simulate payments & track appointments.",
+      "signInAs": "Sign in as Sarah Jenkins"
+    },
+    "doctorCard": {
+      "badge": "Clinical Workflow Tool",
+      "title": "Doctor Portal",
+      "description": "Review appointment requests, approve or reject with reasons, manage weekly schedules, and record clinical notes.",
+      "signInAs": "Sign in as Dr. Vance"
+    },
+    "adminCard": {
+      "badge": "Executive Control Back-Office",
+      "title": "Admin Portal",
+      "description": "Full CRUD for Doctors & Departments, live appointment monitoring, patient suspension, revenue charts, and system setup.",
+      "signInAs": "Sign in as Chief Admin"
+    },
+    "footer": {
+      "copyright": "© 2026 Lumina Health Management System • Graduation Project Frontend",
+      "apiStatus": "Mock API Layer Ready for Express Wiring"
+    }
+  },
+  "patientDashboard": {
+    "badge": "Patient Portal",
+    "welcome": "Welcome back, {{name}}!",
+    "subtitle": "Manage your upcoming hospital consultations, book top specialists across departments, and review your medical records.",
+    "button": {
+      "bookNew": "Book New Appointment"
+    },
+    "statCard": {
+      "totalAppointments": "Total Appointments",
+      "upcomingVisit": "Upcoming Visit",
+      "upcomingVisitNone": "None",
+      "noActiveBooking": "No active booking",
+      "unreadMessages": "Unread Messages",
+      "medicalRecords": "Medical Records"
+    },
+    "upcoming": {
+      "title": "Next Upcoming Appointment",
+      "viewAll": "View All ({{count}})",
+      "date": "Date",
+      "timeSlot": "Time Slot",
+      "fee": "Fee",
+      "feePaid": "${{fee}} (Paid)",
+      "emptyTitle": "No active appointment scheduled",
+      "emptyText": "Need medical attention? Book a slot with our specialist doctors.",
+      "bookButton": "Book New Appointment"
+    },
+    "quickLinks": {
+      "title": "Quick Patient Links",
+      "browseDepartments": "Browse Departments",
+      "browseDepartmentsSub": "Cardiology, Neurology & more",
+      "findSpecialists": "Find Specialists",
+      "findSpecialistsSub": "Search by rating & experience",
+      "doctorInbox": "Doctor Inbox",
+      "doctorInboxSub": "{{count}} unread message",
+      "emergencyHotline": "Emergency Hotline: {{phone}}"
+    },
+    "featured": {
+      "title": "Featured Hospital Doctors",
+      "subtitle": "Top-rated medical specialists available for consultation",
+      "browseAll": "Browse All ({{count}})",
+      "doctorInfo": "{{department}} • {{years}} yrs exp",
+      "bookSlot": "Book Slot"
+    }
+  },
+  "doctorListing": {
+    "title": "Medical Specialists & Doctors",
+    "subtitle": "Find experienced doctors, read patient ratings, and book your appointment online",
+    "showingCount": "Showing {{filtered}} of {{total}} Doctors",
+    "searchPlaceholder": "Search doctor name, specialty...",
+    "filter": {
+      "allDepartments": "All Departments",
+      "allStarRatings": "All Star Ratings",
+      "stars48": "4.8+ Stars (Top Rated)",
+      "stars45": "4.5+ Stars",
+      "stars40": "4.0+ Stars"
+    },
+    "card": {
+      "experience": "Experience",
+      "experienceYears": "{{years}} Years",
+      "languages": "Languages",
+      "consultation": "Consultation",
+      "fee": "${{fee}}"
+    },
+    "button": {
+      "bioProfile": "Bio Profile",
+      "bookSlot": "Book Slot"
+    },
+    "modal": {
+      "subtitle": "{{specialty}} • {{department}}"
+    }
+  },
+  "browseDepartments": {
+    "title": "Hospital Departments",
+    "subtitle": "Explore specialized medical units, active doctors, and operational status",
+    "totalCount": "Total Departments: {{count}}",
+    "card": {
+      "availableDoctors": "Available Doctors:",
+      "specialistCount": "{{count}} Specialists"
+    },
+    "button": {
+      "viewDoctors": "View Doctors in {{name}}",
+      "inMaintenance": "In Maintenance",
+      "departmentClosed": "Department Closed"
+    }
+  },
+  "bookAppointmentFlow": {
+    "step1": {
+      "label": "Time Slot",
+      "title": "Step 1: Select Doctor & Schedule",
+      "subtitle": "Choose your preferred doctor, appointment date, and available slot",
+      "doctorLabel": "Select Medical Specialist",
+      "doctorOptionFormat": "{{name}} ({{specialty}} - ${{fee}})",
+      "dateLabel": "Appointment Date",
+      "slotsLabel": "Available Time Slots for {{date}}",
+      "cancelButton": "Cancel",
+      "continueButton": "Continue to Details"
+    },
+    "step2": {
+      "label": "Details",
+      "title": "Step 2: Reason for Visit & Review",
+      "subtitle": "Provide medical details for the doctor and verify booking summary",
+      "bookingOverview": "Booking Overview",
+      "overviewDoctor": "Doctor",
+      "overviewDate": "Date",
+      "overviewTimeSlot": "Time Slot",
+      "overviewFee": "Consultation Fee",
+      "notesLabel": "Symptoms / Reason for Visit (Optional)",
+      "notesPlaceholder": "Describe any symptoms, previous medical history, or specific questions for the doctor...",
+      "backButton": "Back",
+      "proceedButton": "Proceed to Payment"
+    },
+    "step3": {
+      "label": "Payment",
+      "title": "Step 3: Secure Payment Simulation",
+      "subtitle": "UI-only payment processing (No real card charged)",
+      "sslBadge": "256-bit SSL Encrypted",
+      "totalAmount": "Total Consultation Amount",
+      "amountDisplay": "${{fee}}.00 USD",
+      "patientLabel": "Patient: {{name}}",
+      "doctorLabel": "Doctor: {{name}}",
+      "paymentMethodLabel": "Select Payment Method",
+      "methodCreditCard": "Credit Card",
+      "methodDebitCard": "Debit Card",
+      "methodApplePay": "Apple Pay",
+      "methodDigitalWallet": "Digital Wallet",
+      "cardNumber": "Card Number",
+      "expiryDate": "Expiry Date",
+      "cvc": "CVC / CVV",
+      "backButton": "Back",
+      "processing": "Processing Payment...",
+      "payButton": "Pay ${{fee}}.00 USD"
+    },
+    "step4": {
+      "label": "Invoice",
+      "badge": "Booking Confirmed",
+      "title": "Appointment Request Received!",
+      "message": "Your consultation booking with {{doctorName}} has been created and sent for final doctor approval.",
+      "invoiceHospitalName": "Lumina Health Medical Hospital",
+      "invoiceSubtitle": "Electronic Booking Receipt / E-Invoice",
+      "invoiceStatus": "PAID (TXN READY)",
+      "invoicePatient": "Patient",
+      "invoiceDoctor": "Attending Doctor",
+      "invoiceDate": "Scheduled Date",
+      "invoiceTimeSlot": "Time Slot",
+      "invoicePaidVia": "Paid via {{method}}",
+      "printButton": "Print / Save E-Invoice",
+      "goToAppointments": "Go to My Appointments"
+    }
+  },
+  "myAppointments": {
+    "title": "My Appointments",
+    "subtitle": "Track visit status, modify upcoming slots, or submit doctor ratings",
+    "totalCount": "Total: {{count}}",
+    "empty": "No appointment records found.",
+    "doctorSpecialty": "{{specialty}} • {{department}}",
+    "feePaid": "${{fee}} Paid",
+    "rejectionReason": "Reason: {{reason}}",
+    "button": {
+      "alreadyRated": "Already Rated",
+      "rateDoctor": "Rate Doctor",
+      "reschedule": "Reschedule",
+      "cancelAppointment": "Cancel Appointment"
+    },
+    "cancelWindowTooltip": "Cannot cancel within {{hours}}h of appointment time",
+    "cancelWindowClosed": "Cancel window closed (<{{hours}}h)",
+    "rateModal": {
+      "title": "Rate Your Visit with {{doctorName}}",
+      "subtitle": "Your feedback helps maintain healthcare service quality",
+      "selectRating": "Select Star Rating",
+      "reviewLabel": "Your Review & Comments",
+      "placeholder": "How was the doctor's care, waiting time, and clinic experience?",
+      "cancel": "Cancel",
+      "submitRating": "Submit Rating"
+    },
+    "rescheduleModal": {
+      "title": "Reschedule Visit - {{doctorName}}",
+      "dateLabel": "Select New Date",
+      "timeSlotLabel": "Select Preferred Time Slot",
+      "cancel": "Cancel",
+      "confirmReschedule": "Confirm Reschedule"
+    }
+  },
+  "doctorProfile": {
+    "badge": "{{department}}",
+    "name": "{{name}}",
+    "specialty": "{{specialty}}",
+    "experience": "{{years}} Years Clinical Practice",
+    "aboutDoctor": "About Doctor",
+    "stat": {
+      "fee": "Fee",
+      "feeValue": "${{fee}} / session",
+      "languages": "Languages",
+      "availableDays": "Available Days"
+    },
+    "reviews": {
+      "title": "Verified Patient Reviews ({{count}})",
+      "empty": "No patient reviews submitted yet for this doctor."
+    },
+    "button": {
+      "bookConsultation": "Proceed to Book Consultation"
+    }
+  },
+  "patientMessages": {
+    "sidebar": {
+      "title": "Doctor Inbox",
+      "subtitle": "Direct consultations & inquiries"
+    },
+    "chatHeader": {
+      "badge": "Attending Physician"
+    },
+    "inputPlaceholder": "Type message to doctor...",
+    "button": {
+      "send": "Send"
+    },
+    "emptyState": "Select a conversation to open thread."
+  },
+  "patientProfile": {
+    "subtitle": "Patient ID: #{{id}} • Registered Member",
+    "sectionTitle": "Personal Information",
+    "successMessage": "Profile updated successfully!",
+    "form": {
+      "fullName": "Full Name",
+      "email": "Email Address",
+      "phone": "Phone Number",
+      "dob": "Date of Birth",
+      "address": "Residential Address",
+      "fileUpload": "Upload Insurance Card or Medical ID Document"
+    },
+    "button": {
+      "save": "Save Profile Updates"
+    }
+  },
+  "doctorDashboard": {
+    "badge": "Clinical Portal",
+    "title": "Dr. {{name}}",
+    "subtitle": "{{specialty}} • You have {{count}} pending requests awaiting approval today.",
+    "button": {
+      "manageSchedule": "Manage Weekly Schedule"
+    },
+    "statCard": {
+      "pendingRequests": "Pending Requests",
+      "pendingRequestsSubtitle": "Action required",
+      "confirmedAppointments": "Confirmed Appointments",
+      "completedVisits": "Completed Visits",
+      "totalIncome": "Total Practice Income"
+    },
+    "urgent": {
+      "title": "Urgent: Pending Patient Requests ({{count}})",
+      "openFullManager": "Open Full Request Manager"
+    },
+    "button": {
+      "approve": "Approve",
+      "review": "Review",
+      "markCompleted": "Mark Completed"
+    },
+    "upcomingVisits": {
+      "title": "Upcoming Confirmed Visits",
+      "viewAll": "View All ({{count}})",
+      "empty": "No confirmed patient visits scheduled right now."
+    }
+  },
+  "doctorAppointments": {
+    "title": "Appointment Requests",
+    "subtitle": "Approve or reject incoming patient consultation requests",
+    "requestCount": "Requests: {{count}}",
+    "appointmentInfo": "{{date}} • {{timeSlot}} • Consultation Fee: ${{fee}}",
+    "patientNote": "Patient Note: \"{{note}}\"",
+    "rejectionReason": "Rejection Reason: {{reason}}",
+    "button": {
+      "approve": "Approve",
+      "reject": "Reject",
+      "markCompleted": "Mark Completed",
+      "cancel": "Cancel",
+      "confirmRejection": "Confirm Rejection"
+    },
+    "rejectModal": {
+      "title": "Reject Request from {{patientName}}",
+      "subtitle": "You must provide a clear medical reason for the rejection",
+      "reasonLabel": "Rejection Reason (Required)",
+      "placeholder": "e.g. Doctor unavailable on selected day, emergency surgery scheduled, or specialist mismatch..."
+    }
+  },
+  "doctorPatients": {
+    "title": "Patient Health Records",
+    "subtitle": "View patient clinical histories and record diagnoses or prescriptions",
+    "button": {
+      "addRecord": "Add Clinical Record",
+      "cancel": "Cancel",
+      "saveRecord": "Save Medical Record"
+    },
+    "selectPatient": "Select Patient",
+    "patientInfo": "Gender: {{gender}} • Blood Group: {{bloodGroup}}",
+    "patientIdLabel": "ID: #{{id}}",
+    "recordedConsultations": "Recorded Consultations ({{count}})",
+    "emptyRecords": "No medical history records logged for this patient yet.",
+    "record": {
+      "diagnosis": "Diagnosis",
+      "prescription": "Prescription",
+      "notes": "Notes: \"{{notes}}\""
+    },
+    "modal": {
+      "title": "Add Medical Record for {{name}}",
+      "diagnosisLabel": "Diagnosis",
+      "diagnosisPlaceholder": "e.g. Acute Bronchitis / Stage 1 Hypertension",
+      "prescriptionLabel": "Prescription",
+      "prescriptionPlaceholder": "e.g. Amoxicillin 500mg - 1 tablet 3x daily for 7 days",
+      "notesLabel": "Clinical Notes",
+      "notesPlaceholder": "Patient progress, lab test recommendations..."
+    }
+  },
+  "doctorSchedule": {
+    "title": "Weekly Availability Schedule",
+    "subtitle": "Lock or unlock consultation time slots for patient booking",
+    "activeSlots": "Active Slots: {{count}}",
+    "sectionTitle": "Daily Consultation Slots",
+    "tooltip": {
+      "unlock": "Unlock slot for patient booking",
+      "lock": "Lock slot to prevent booking"
+    }
+  },
+  "doctorProfilePage": {
+    "title": "Dr. {{name}}",
+    "sectionTitle": "Doctor Professional Profile & Credentials",
+    "successMessage": "Doctor credentials updated!",
+    "form": {
+      "name": "Doctor Name",
+      "specialty": "Specialty",
+      "consultationFee": "Consultation Fee ($ USD)",
+      "clinicalEmail": "Clinical Email",
+      "bio": "Professional Bio",
+      "fileUpload": "Update Profile Picture or Medical Practice License (Simulated Multer Upload)"
+    },
+    "button": {
+      "save": "Save Credentials"
+    }
+  },
+  "doctorMessages": {
+    "sidebar": {
+      "title": "Patient Consultations",
+      "subtitle": "Direct messages from registered patients"
+    },
+    "chatHeader": {
+      "badge": "Patient Consultation"
+    },
+    "inputPlaceholder": "Reply to patient...",
+    "button": {
+      "send": "Send"
+    },
+    "emptyState": "Select consultation to begin."
+  },
+  "adminDashboard": {
+    "badge": "Executive Control Console",
+    "title": "Hospital System Overview",
+    "subtitle": "Real-time telemetry on doctors, departments, appointment throughput, and hospital revenue.",
+    "addDoctor": "Add Doctor",
+    "manageDepartments": "Manage Depts",
+    "statCard": {
+      "medicalStaff": "Medical Staff",
+      "medicalStaffSubtitle": "Active doctors",
+      "departments": "Departments",
+      "departmentsSubtitle": "Operational units",
+      "totalPatients": "Total Patients",
+      "appointments": "Appointments",
+      "appointmentsSubtitle": "{{count}} pending",
+      "grossRevenue": "Gross Revenue",
+      "revenueSubtitle": "Paid transactions"
+    },
+    "recentActivity": {
+      "title": "Recent Hospital Appointments Telemetry",
+      "subtitle": "Live feed of patient bookings across all departments",
+      "viewAll": "View All ({{count}})",
+      "columnPatient": "Patient",
+      "columnDoctor": "Attending Doctor",
+      "columnSchedule": "Schedule",
+      "columnFee": "Fee Paid",
+      "columnStatus": "Status",
+      "idLabel": "ID: #{{id}}"
+    }
+  },
+  "managePatients": {
+    "title": "Manage Registered Patients",
+    "subtitle": "Admin patient accounts management & suspension flags",
+    "registeredCount": "Registered: {{count}}",
+    "idLabel": "ID: #{{id}}",
+    "tableHeader": {
+      "patient": "Patient",
+      "email": "Email",
+      "phone": "Phone",
+      "bloodGroup": "Blood Group",
+      "status": "Status",
+      "action": "Action"
+    },
+    "status": {
+      "suspended": "Suspended",
+      "active": "Active Account"
+    },
+    "button": {
+      "reactivate": "Reactivate",
+      "suspend": "Suspend Account"
+    }
+  },
+  "monitorAppointments": {
+    "title": "Monitor Hospital Appointments",
+    "subtitle": "Admin oversight & emergency override actions for all patient bookings",
+    "searchPlaceholder": "Search patient or doctor...",
+    "filter": {
+      "allStatuses": "All Statuses",
+      "pending": "Pending",
+      "confirmed": "Confirmed",
+      "completed": "Completed",
+      "cancelled": "Cancelled",
+      "rejected": "Rejected"
+    },
+    "tableHeader": {
+      "id": "Appointment ID",
+      "patient": "Patient",
+      "doctorDept": "Doctor & Dept",
+      "dateTime": "Date & Time",
+      "fee": "Fee",
+      "status": "Status",
+      "adminAction": "Admin Action"
+    },
+    "button": {
+      "approve": "Approve",
+      "overrideCancel": "Override Cancel"
+    }
+  },
+  "manageDepartments": {
+    "title": "Manage Hospital Departments",
+    "subtitle": "Configure active hospital units and maintenance status",
+    "assignedDoctors": "{{count}} Assigned Doctors",
+    "button": {
+      "add": "Add Department",
+      "cancel": "Cancel",
+      "save": "Save Department"
+    },
+    "modal": {
+      "addTitle": "Add Hospital Department",
+      "editTitle": "Edit {{name}}"
+    },
+    "form": {
+      "name": "Department Name",
+      "status": "Operational Status",
+      "description": "Description"
+    },
+    "statusOption": {
+      "active": "Active (Accepting Bookings)",
+      "maintenance": "Under Maintenance",
+      "closed": "Temporarily Closed"
+    }
+  },
+  "manageDoctors": {
+    "title": "Manage Hospital Doctors",
+    "subtitle": "Full admin CRUD operations for medical staff records",
+    "idLabel": "ID: #{{id}}",
+    "experienceYears": "{{years}} yrs",
+    "button": {
+      "add": "Add New Doctor",
+      "cancel": "Cancel",
+      "save": "Save Doctor"
+    },
+    "tableHeader": {
+      "doctor": "Doctor",
+      "deptSpecialty": "Department & Specialty",
+      "experience": "Experience",
+      "fee": "Fee",
+      "rating": "Rating",
+      "actions": "Actions"
+    },
+    "tooltip": {
+      "edit": "Edit Doctor Info",
+      "delete": "Delete Doctor"
+    },
+    "modal": {
+      "addTitle": "Add New Medical Doctor",
+      "editTitle": "Edit Doctor - {{name}}"
+    },
+    "form": {
+      "name": "Doctor Name",
+      "department": "Department",
+      "specialty": "Specialty",
+      "experience": "Experience (Years)",
+      "consultationFee": "Consultation Fee ($ USD)",
+      "languages": "Languages (Comma separated)",
+      "bio": "Professional Bio",
+      "avatarUpload": "Doctor Avatar Picture Upload"
+    }
+  },
+  "systemSettings": {
+    "title": "System Global Configuration",
+    "subtitle": "Configure hospital operational parameters and cancellation rules",
+    "successMessage": "Global rules updated successfully!",
+    "section": {
+      "businessRules": "Business Rules"
+    },
+    "form": {
+      "cancellationWindow": "Minimum Cancellation Window (Hours)",
+      "cancellationWindowHelp": "Patients cannot cancel or modify appointments within this time frame before the slot.",
+      "maxBookings": "Max Active Bookings Per Patient",
+      "defaultFee": "Default Consultation Fee ($ USD)",
+      "emergencyBanner": "Emergency Notice Banner Text"
+    },
+    "button": {
+      "save": "Save System Rules"
+    }
+  },
+  "revenuePayments": {
+    "title": "Revenue & Payment Gateway",
+    "subtitle": "Financial analytics, consultation receipts, and payment transactions",
+    "grossRevenue": "Gross Revenue",
+    "chart": {
+      "monthlyRevenue": "Monthly Revenue Trend (USD)"
+    },
+    "table": {
+      "title": "Transaction History ({{count}})"
+    },
+    "button": {
+      "exportLedger": "Export Ledger"
+    },
+    "tableHeader": {
+      "transactionId": "Transaction ID",
+      "patient": "Patient",
+      "doctor": "Doctor",
+      "method": "Method",
+      "date": "Date",
+      "amount": "Amount"
+    }
+  },
+  "reportsAnalytics": {
+    "title": "Hospital Analytics & Performance",
+    "subtitle": "Visual distribution of doctors per department and appointment breakdown",
+    "chart": {
+      "doctorsPerDepartment": "Doctors per Department",
+      "appointmentStatusBreakdown": "Appointment Status Breakdown"
+    },
+    "status": {
+      "confirmed": "Confirmed",
+      "completed": "Completed",
+      "pending": "Pending",
+      "cancelled": "Cancelled"
+    }
+  },
+  "auth": {
+    "defaultUser": {
+      "adminName": "Chief Admin (Dr. Arthur Pendelton)",
+      "doctorName": "Dr. Robert Vance",
+      "patientName": "Sarah Jenkins"
+    },
+    "error": {
+      "useAuthOutsideProvider": "useAuth must be used within an AuthProvider"
+    }
+  },
+  "data": {
+    "fallback": {
+      "doctorName": "Doctor",
+      "specialty": "Specialist",
+      "departmentName": "General"
+    },
+    "defaultUser": {
+      "patientName": "Sarah Jenkins",
+      "doctorName": "Dr. Robert Vance",
+      "adminName": "Admin"
+    },
+    "defaultRecipientName": "Recipient",
+    "error": {
+      "useDataOutsideProvider": "useData must be used within a DataProvider"
+    }
+  },
+  "notification": {
+    "appointmentRequestSubmitted": {
+      "title": "Appointment Request Submitted",
+      "message": "Your booking with {{doctorName}} on {{date}} at {{timeSlot}} is pending doctor confirmation."
+    },
+    "newPendingBooking": {
+      "title": "New Pending Booking",
+      "message": "{{patientName}} requested an appointment for {{date}} at {{timeSlot}}."
+    },
+    "appointmentCancelled": {
+      "title": "Appointment Cancelled",
+      "message": "Appointment #{{id}} with {{doctorName}} was cancelled. Refund processed."
+    },
+    "appointmentConfirmed": {
+      "title": "Appointment Confirmed",
+      "message": "Dr. {{doctorName}} confirmed your appointment for {{date}} at {{timeSlot}}."
+    },
+    "appointmentRejected": {
+      "title": "Appointment Rejected",
+      "message": "Dr. {{doctorName}} rejected your booking request. Reason: {{reason}}. Refund issued."
+    }
+  },
+  "appointment": {
+    "cancelledByUser": "Cancelled by user",
+    "rejectionReason": {
+      "doctorRemoved": "Doctor profile was removed"
+    }
+  }
+}

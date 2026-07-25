@@ -1,0 +1,6 @@
+{
+  "name": "Hospital Appointment System",
+  "description": "Unified multi-role dashboard for Patient, Doctor, and Admin management with full mock data capabilities.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,804 @@
+{
+  "app": {
+    "title": "لومينا للرعاية الصحية - لوحة التحكم"
+  },
+  "role": {
+    "admin": "مدير النظام",
+    "doctor": "طبيب",
+    "patient": "مريض"
+  },
+  "nav": {
+    "patient": {
+      "dashboard": "لوحة التحكم",
+      "departments": "تصفح الأقسام",
+      "doctors": "البحث عن أطباء",
+      "appointments": "مواعيدي",
+      "messages": "الرسائل / البريد الوارد",
+      "profile": "الملف الشخصي والإعدادات"
+    },
+    "doctor": {
+      "dashboard": "لوحة التحكم",
+      "appointments": "طلبات المواعيد",
+      "schedule": "الجدول الأسبوعي",
+      "patients": "سجلات المرضى",
+      "messages": "الرسائل / البريد الوارد",
+      "profile": "الملف الشخصي والإعدادات"
+    },
+    "admin": {
+      "dashboard": "نظرة عامة على النظام",
+      "doctors": "إدارة الأطباء",
+      "departments": "الأقسام",
+      "appointments": "مراقبة المواعيد",
+      "patients": "إدارة المرضى",
+      "payments": "الإيرادات والمدفوعات",
+      "reports": "التقارير والتحليلات",
+      "settings": "إعدادات النظام"
+    }
+  },
+  "sidebar": {
+    "logoAlt": "لومينا للرعاية الصحية",
+    "logoFallback": "ل.ص",
+    "brandName": "لومينا للرعاية الصحية",
+    "version": "نظام المستشفى الإصدار 2.4",
+    "badge": {
+      "admin": "النواة الإدارية",
+      "doctor": "البوابة السريرية",
+      "patient": "مساحة عمل المريض"
+    },
+    "userAccount": "الحساب",
+    "logoutTooltip": "تسجيل الخروج / تبديل المستخدم"
+  },
+  "pageTitle": {
+    "fallback": "نظام إدارة المستشفى",
+    "patient": {
+      "dashboard": "نظرة عامة على بوابة المريض",
+      "departments": "الأقسام الطبية",
+      "doctors": "البحث عن أطباء وحجز المواعيد",
+      "appointments": "مواعيدي وسجلي",
+      "messages": "بريد المريض والاستشارات",
+      "profile": "الملف الشخصي والإعدادات"
+    },
+    "doctor": {
+      "dashboard": "لوحة التحكم السريرية",
+      "appointments": "طلبات المواعيد",
+      "schedule": "الجدول الأسبوعي للمواعيد",
+      "patients": "سجلات المرضى الصحية",
+      "messages": "رسائل الأطباء العامة",
+      "profile": "الملف الشخصي والاعتمادات"
+    },
+    "admin": {
+      "dashboard": "لوحة التحكم الرئيسية",
+      "doctors": "إدارة الكادر الطبي",
+      "departments": "إدارة أقسام المستشفى",
+      "appointments": "مراقبة مواعيد المستشفى",
+      "patients": "إدارة المرضى المسجلين",
+      "payments": "المالية وتتبع الإيرادات",
+      "reports": "التحليلات وتقارير النظام",
+      "settings": "إعدادات نظام المستشفى"
+    }
+  },
+  "navbar": {
+    "logoAlt": "لومينا للرعاية الصحية",
+    "statusLabel": "الحالة:",
+    "statusOperational": "نشط",
+    "direction": {
+      "tooltip": "تبديل اتجاه التخطيط (الحالي: {{dir}})",
+      "ltr": "LTR",
+      "rtl": "RTL (العربية)"
+    },
+    "notifications": {
+      "heading": "الإشعارات",
+      "empty": "لا توجد إشعارات.",
+      "now": "الآن"
+    },
+    "roleSwitch": {
+      "admin": "مدير",
+      "doctor": "طبيب",
+      "patient": "مريض"
+    }
+  },
+  "footer": {
+    "systemState": "حالة النظام نشطة",
+    "mockDataMode": "وضع البيانات الوهمية - لا اتصالات شبكة",
+    "brand": "نظام لومينا الصحي",
+    "separator": "•",
+    "roleView": "عرض {{role}}"
+  },
+  "status": {
+    "confirmed": "مؤكد",
+    "active": "نشط",
+    "completed": "مكتمل",
+    "pending": "قيد الانتظار",
+    "rejected": "مرفوض",
+    "cancelled": "ملغي",
+    "closed": "مغلق",
+    "maintenance": "صيانة",
+    "suspended": "موقوف",
+    "paid": "مدفوع",
+    "unpaid": "غير مدفوع",
+    "refunded": "مسترجع"
+  },
+  "dataTable": {
+    "search": {
+      "placeholder": "بحث في السجلات..."
+    },
+    "empty": {
+      "message": "لم يتم العثور على سجلات مطابقة."
+    },
+    "actions": {
+      "header": "إجراءات"
+    },
+    "pagination": {
+      "showing": "عرض",
+      "to": "إلى",
+      "of": "من",
+      "entries": "مدخل"
+    }
+  },
+  "fileUpload": {
+    "label": {
+      "default": "رفع صورة الملف الشخصي / مستند"
+    },
+    "defaultFileName": "ملف موجود.jpg",
+    "defaultFileSize": "1.2 ميجابايت",
+    "image": {
+      "alt": "معاينة"
+    },
+    "status": {
+      "ready": "جاهز"
+    },
+    "dropZone": {
+      "dragAndDrop": "اسحب وأفلت أو ",
+      "browse": "تصفح",
+      "supportedFormats": "يدعم PNG, JPG, PDF حتى 5 ميجابايت"
+    },
+    "sizeUnit": "ميجابايت"
+  },
+  "timeSlotPicker": {
+    "empty": {
+      "message": "لا توجد مواعيد متاحة لهذا التاريخ."
+    },
+    "timeSeparator": " - "
+  },
+  "avatar": {
+    "initialsFallback": "?"
+  },
+  "login": {
+    "brandAbbreviation": "ص+",
+    "brandName": "ميدي كنترول",
+    "brandSubtitle": "نظام إدارة مواعيد المستشفى",
+    "switchToRtl": "التبديل إلى العربية (RTL)",
+    "switchToLtr": "التبديل إلى الإنجليزية (LTR)",
+    "badge": "لوحة تحكم متعددة الأدوار",
+    "title": "اختر بوابتك للدخول",
+    "subtitle": "اختبر النظام كمريض أو طبيب أو مدير نظام مع حالات وهمية مُعدة مسبقاً.",
+    "form": {
+      "welcome": "تسجيل الدخول إلى لومينا",
+      "emailLabel": "البريد الإلكتروني",
+      "emailPlaceholder": "أدخل بريدك الإلكتروني",
+      "passwordLabel": "كلمة المرور",
+      "passwordPlaceholder": "أدخل كلمة المرور",
+      "submit": "تسجيل الدخول",
+      "error": ".البريد الإلكتروني أو كلمة المرور غير صحيحة ",
+      "demoHint": "تجريبي: admin@lumina.com / admin123"
+    },
+    "patientCard": {
+      "badge": "واجهة حجز المستهلك",
+      "title": "بوابة المريض",
+      "description": "تصفح الأقسام، شاهد سير الأطباء، اختر المواعيد المتاحة، محاكاة الدفع وتتبع المواعيد.",
+      "signInAs": "تسجيل الدخول كـ سارة أحمد"
+    },
+    "doctorCard": {
+      "badge": "أداة سير العمل السريري",
+      "title": "بوابة الطبيب",
+      "description": "مراجعة طلبات المواعيد، الموافقة أو الرفض مع الأسباب، إدارة الجدول الأسبوعي، وتسجيل الملاحظات السريرية.",
+      "signInAs": "تسجيل الدخول كـ د. روبرت"
+    },
+    "adminCard": {
+      "badge": "المكتب الخلفي للتحكم التنفيذي",
+      "title": "بوابة المدير",
+      "description": "إدارة كاملة للأطباء والأقسام، مراقبة حية للمواعيد، تعليق المرضى، رسوم بيانية للإيرادات، وإعدادات النظام.",
+      "signInAs": "تسجيل الدخول كـ المدير الرئيسي"
+    },
+    "footer": {
+      "copyright": "© 2026 نظام لومينا لإدارة المستشفيات • مشروع التخرج - الواجهة الأمامية",
+      "apiStatus": "طبقة API وهمية جاهزة للتوصيل بـ Express"
+    }
+  },
+  "patientDashboard": {
+    "badge": "بوابة المريض",
+    "welcome": "مرحباً بعودتك، {{name}}!",
+    "subtitle": "إدارة استشاراتك القادمة، احجز مع كبار الأطباء عبر الأقسام، وراجع سجلاتك الطبية.",
+    "button": {
+      "bookNew": "حجز موعد جديد"
+    },
+    "statCard": {
+      "totalAppointments": "إجمالي المواعيد",
+      "upcomingVisit": "الموعد القادم",
+      "upcomingVisitNone": "لا يوجد",
+      "noActiveBooking": "لا يوجد حجز نشط",
+      "unreadMessages": "الرسائل غير المقروءة",
+      "medicalRecords": "السجلات الطبية"
+    },
+    "upcoming": {
+      "title": "الموعد القادم",
+      "viewAll": "عرض الكل ({{count}})",
+      "date": "التاريخ",
+      "timeSlot": "الوقت",
+      "fee": "الرسوم",
+      "feePaid": "${{fee}} (مدفوع)",
+      "emptyTitle": "لا يوجد موعد نشط",
+      "emptyText": "بحاجة لرعاية طبية؟ احجز موعداً مع أطبائنا المتخصصين.",
+      "bookButton": "حجز موعد جديد"
+    },
+    "quickLinks": {
+      "title": "روابط سريعة للمريض",
+      "browseDepartments": "تصفح الأقسام",
+      "browseDepartmentsSub": "أمراض القلب، الأعصاب والمزيد",
+      "findSpecialists": "البحث عن أطباء",
+      "findSpecialistsSub": "ابحث حسب التقييم والخبرة",
+      "doctorInbox": "بريد الطبيب",
+      "doctorInboxSub": "{{count}} رسالة غير مقروءة",
+      "emergencyHotline": "الخط الساخن للطوارئ: {{phone}}"
+    },
+    "featured": {
+      "title": "أطباء المستشفى المميزون",
+      "subtitle": "أفضل الأطباء المتخصصون المتاحون للاستشارة",
+      "browseAll": "تصفح الكل ({{count}})",
+      "doctorInfo": "{{department}} • {{years}} سنة خبرة",
+      "bookSlot": "احجز موعداً"
+    }
+  },
+  "doctorListing": {
+    "title": "الأطباء المتخصصون",
+    "subtitle": "ابحث عن أطباء ذوي خبرة، اقرأ تقييمات المرضى، واحجز موعدك أونلاين",
+    "showingCount": "عرض {{filtered}} من {{total}} طبيباً",
+    "searchPlaceholder": "ابحث باسم الطبيب، التخصص...",
+    "filter": {
+      "allDepartments": "جميع الأقسام",
+      "allStarRatings": "جميع التقييمات",
+      "stars48": "أكثر من 4.8 نجمة (الأعلى تقييماً)",
+      "stars45": "أكثر من 4.5 نجمة",
+      "stars40": "أكثر من 4.0 نجمة"
+    },
+    "card": {
+      "experience": "الخبرة",
+      "experienceYears": "{{years}} سنة",
+      "languages": "اللغات",
+      "consultation": "الكشفية",
+      "fee": "${{fee}}"
+    },
+    "button": {
+      "bioProfile": "السيرة الذاتية",
+      "bookSlot": "احجز موعداً"
+    },
+    "modal": {
+      "subtitle": "{{specialty}} • {{department}}"
+    }
+  },
+  "browseDepartments": {
+    "title": "أقسام المستشفى",
+    "subtitle": "استكشف الوحدات الطبية المتخصصة، الأطباء النشطين، وحالة التشغيل",
+    "totalCount": "إجمالي الأقسام: {{count}}",
+    "card": {
+      "availableDoctors": "الأطباء المتاحون:",
+      "specialistCount": "{{count}} مختص"
+    },
+    "button": {
+      "viewDoctors": "عرض الأطباء في {{name}}",
+      "inMaintenance": "قيد الصيانة",
+      "departmentClosed": "القسم مغلق"
+    }
+  },
+  "bookAppointmentFlow": {
+    "step1": {
+      "label": "الموعد",
+      "title": "الخطوة 1: اختر الطبيب والموعد",
+      "subtitle": "اختر طبيبك المفضل وتاريخ الموعد والوقت المتاح",
+      "doctorLabel": "اختر الطبيب المختص",
+      "doctorOptionFormat": "{{name}} ({{specialty}} - ${{fee}})",
+      "dateLabel": "تاريخ الموعد",
+      "slotsLabel": "المواعيد المتاحة لـ {{date}}",
+      "cancelButton": "إلغاء",
+      "continueButton": "متابعة إلى التفاصيل"
+    },
+    "step2": {
+      "label": "التفاصيل",
+      "title": "الخطوة 2: سبب الزيارة والمراجعة",
+      "subtitle": "قدم التفاصيل الطبية للطبيب وتأكد من ملخص الحجز",
+      "bookingOverview": "ملخص الحجز",
+      "overviewDoctor": "الطبيب",
+      "overviewDate": "التاريخ",
+      "overviewTimeSlot": "الوقت",
+      "overviewFee": "رسوم الكشفية",
+      "notesLabel": "الأعراض / سبب الزيارة (اختياري)",
+      "notesPlaceholder": "صف أي أعراض، تاريخ طبي سابق، أو أسئلة محددة للطبيب...",
+      "backButton": "رجوع",
+      "proceedButton": "متابعة إلى الدفع"
+    },
+    "step3": {
+      "label": "الدفع",
+      "title": "الخطوة 3: محاكاة الدفع الآمن",
+      "subtitle": "معالجة دفع تجريبية (لا يتم خصم أي مبلغ حقيقي)",
+      "sslBadge": "مشفر بتقنية SSL 256 بت",
+      "totalAmount": "إجمالي مبلغ الكشفية",
+      "amountDisplay": "${{fee}}.00 دولار",
+      "patientLabel": "المريض: {{name}}",
+      "doctorLabel": "الطبيب: {{name}}",
+      "paymentMethodLabel": "اختر طريقة الدفع",
+      "methodCreditCard": "بطاقة ائتمان",
+      "methodDebitCard": "بطاقة خصم",
+      "methodApplePay": "أبل باي",
+      "methodDigitalWallet": "محفظة رقمية",
+      "cardNumber": "رقم البطاقة",
+      "expiryDate": "تاريخ الانتهاء",
+      "cvc": "CVC / CVV",
+      "backButton": "رجوع",
+      "processing": "جاري معالجة الدفع...",
+      "payButton": "ادفع ${{fee}}.00 دولار"
+    },
+    "step4": {
+      "label": "الفاتورة",
+      "badge": "تم تأكيد الحجز",
+      "title": "تم استلام طلب الموعد!",
+      "message": "تم إنشاء حجزك مع {{doctorName}} وإرساله لموافقة الطبيب النهائية.",
+      "invoiceHospitalName": "مستشفى لومينا الطبي",
+      "invoiceSubtitle": "إيصال حجز إلكتروني / فاتورة إلكترونية",
+      "invoiceStatus": "مدفوع (رقم المعاملة جاهز)",
+      "invoicePatient": "المريض",
+      "invoiceDoctor": "الطبيب المعالج",
+      "invoiceDate": "التاريخ المحدد",
+      "invoiceTimeSlot": "الوقت",
+      "invoicePaidVia": "مدفوع عبر {{method}}",
+      "printButton": "طباعة / حفظ الفاتورة الإلكترونية",
+      "goToAppointments": "الذهاب إلى مواعيدي"
+    }
+  },
+  "myAppointments": {
+    "title": "مواعيدي",
+    "subtitle": "تتبع حالة الزيارة، تعديل المواعيد القادمة، أو تقديم تقييم للطبيب",
+    "totalCount": "الإجمالي: {{count}}",
+    "empty": "لم يتم العثور على مواعيد.",
+    "doctorSpecialty": "{{specialty}} • {{department}}",
+    "feePaid": "${{fee}} مدفوع",
+    "rejectionReason": "السبب: {{reason}}",
+    "button": {
+      "alreadyRated": "تم التقييم مسبقاً",
+      "rateDoctor": "تقييم الطبيب",
+      "reschedule": "إعادة جدولة",
+      "cancelAppointment": "إلغاء الموعد"
+    },
+    "cancelWindowTooltip": "لا يمكن الإلغاء خلال {{hours}} ساعة من الموعد",
+    "cancelWindowClosed": "نافذة الإلغاء مغلقة (أقل من {{hours}} ساعة)",
+    "rateModal": {
+      "title": "قيم زيارتك مع {{doctorName}}",
+      "subtitle": "ملاحظاتك تساعد في الحفاظ على جودة الخدمة الصحية",
+      "selectRating": "اختر التقييم بالنجوم",
+      "reviewLabel": "مراجعتك وتعليقاتك",
+      "placeholder": "كيف كانت رعاية الطبيب، وقت الانتظار، وتجربة العيادة؟",
+      "cancel": "إلغاء",
+      "submitRating": "إرسال التقييم"
+    },
+    "rescheduleModal": {
+      "title": "إعادة جدولة - {{doctorName}}",
+      "dateLabel": "اختر تاريخاً جديداً",
+      "timeSlotLabel": "اختر الوقت المناسب",
+      "cancel": "إلغاء",
+      "confirmReschedule": "تأكيد إعادة الجدولة"
+    }
+  },
+  "doctorProfile": {
+    "badge": "{{department}}",
+    "name": "{{name}}",
+    "specialty": "{{specialty}}",
+    "experience": "{{years}} سنة خبرة سريرية",
+    "aboutDoctor": "عن الطبيب",
+    "stat": {
+      "fee": "الكشفية",
+      "feeValue": "${{fee}} / جلسة",
+      "languages": "اللغات",
+      "availableDays": "الأيام المتاحة"
+    },
+    "reviews": {
+      "title": "تقييمات المرضى الموثقة ({{count}})",
+      "empty": "لا توجد تقييمات من المرضى لهذا الطبيب بعد."
+    },
+    "button": {
+      "bookConsultation": "متابعة لحجز الموعد"
+    }
+  },
+  "patientMessages": {
+    "sidebar": {
+      "title": "بريد الطبيب",
+      "subtitle": "استشارات واستفسارات مباشرة"
+    },
+    "chatHeader": {
+      "badge": "الطبيب المعالج"
+    },
+    "inputPlaceholder": "اكتب رسالة للطبيب...",
+    "button": {
+      "send": "إرسال"
+    },
+    "emptyState": "اختر محادثة لفتحها."
+  },
+  "patientProfile": {
+    "subtitle": "معرف المريض: #{{id}} • عضو مسجل",
+    "sectionTitle": "المعلومات الشخصية",
+    "successMessage": "تم تحديث الملف الشخصي بنجاح!",
+    "form": {
+      "fullName": "الاسم الكامل",
+      "email": "البريد الإلكتروني",
+      "phone": "رقم الهاتف",
+      "dob": "تاريخ الميلاد",
+      "address": "العنوان",
+      "fileUpload": "رفع بطاقة التأمين أو وثيقة الهوية الطبية"
+    },
+    "button": {
+      "save": "حفظ تحديثات الملف الشخصي"
+    }
+  },
+  "doctorDashboard": {
+    "badge": "البوابة السريرية",
+    "title": "د. {{name}}",
+    "subtitle": "{{specialty}} • لديك {{count}} طلب قيد الانتظار اليوم.",
+    "button": {
+      "manageSchedule": "إدارة الجدول الأسبوعي"
+    },
+    "statCard": {
+      "pendingRequests": "الطلبات المعلقة",
+      "pendingRequestsSubtitle": "بحاجة إلى إجراء",
+      "confirmedAppointments": "المواعيد المؤكدة",
+      "completedVisits": "الزيارات المكتملة",
+      "totalIncome": "إجمالي الدخل"
+    },
+    "urgent": {
+      "title": "عاجل: طلبات المرضى المعلقة ({{count}})",
+      "openFullManager": "فتح مدير الطلبات الكامل"
+    },
+    "button": {
+      "approve": "موافقة",
+      "review": "مراجعة",
+      "markCompleted": "تحديد كمكتمل"
+    },
+    "upcomingVisits": {
+      "title": "الزيارات المؤكدة القادمة",
+      "viewAll": "عرض الكل ({{count}})",
+      "empty": "لا توجد زيارات مؤكدة مجدولة حالياً."
+    }
+  },
+  "doctorAppointments": {
+    "title": "طلبات المواعيد",
+    "subtitle": "الموافقة أو رفض طلبات استشارات المرضى الواردة",
+    "requestCount": "الطلبات: {{count}}",
+    "appointmentInfo": "{{date}} • {{timeSlot}} • رسوم الكشفية: ${{fee}}",
+    "patientNote": "ملاحظة المريض: \"{{note}}\"",
+    "rejectionReason": "سبب الرفض: {{reason}}",
+    "button": {
+      "approve": "موافقة",
+      "reject": "رفض",
+      "markCompleted": "تحديد كمكتمل",
+      "cancel": "إلغاء",
+      "confirmRejection": "تأكيد الرفض"
+    },
+    "rejectModal": {
+      "title": "رفض طلب من {{patientName}}",
+      "subtitle": "يجب عليك تقديم سبب طبي واضح للرفض",
+      "reasonLabel": "سبب الرفض (مطلوب)",
+      "placeholder": "مثال: الطبيب غير متوفر في اليوم المحدد، عملية جراحية طارئة، أو عدم تطابق التخصص..."
+    }
+  },
+  "doctorPatients": {
+    "title": "سجلات المرضى الصحية",
+    "subtitle": "عرض التاريخ السريري للمرضى وتسجيل التشخيصات أو الوصفات الطبية",
+    "button": {
+      "addRecord": "إضافة سجل سريري",
+      "cancel": "إلغاء",
+      "saveRecord": "حفظ السجل الطبي"
+    },
+    "selectPatient": "اختر مريضاً",
+    "patientInfo": "الجنس: {{gender}} • فصيلة الدم: {{bloodGroup}}",
+    "patientIdLabel": "المعرف: #{{id}}",
+    "recordedConsultations": "الاستشارات المسجلة ({{count}})",
+    "emptyRecords": "لا توجد سجلات تاريخ طبي لهذا المريض بعد.",
+    "record": {
+      "diagnosis": "التشخيص",
+      "prescription": "الوصفة الطبية",
+      "notes": "ملاحظات: \"{{notes}}\""
+    },
+    "modal": {
+      "title": "إضافة سجل طبي لـ {{name}}",
+      "diagnosisLabel": "التشخيص",
+      "diagnosisPlaceholder": "مثال: التهاب الشعب الهوائية الحاد / المرحلة الأولى من ارتفاع ضغط الدم",
+      "prescriptionLabel": "الوصفة الطبية",
+      "prescriptionPlaceholder": "مثال: أموكسيسيلين 500 ملغ - قرص واحد 3 مرات يومياً لمدة 7 أيام",
+      "notesLabel": "الملاحظات السريرية",
+      "notesPlaceholder": "تقدم المريض، توصيات الفحوصات المخبرية..."
+    }
+  },
+  "doctorSchedule": {
+    "title": "الجدول الأسبوعي للمواعيد",
+    "subtitle": "قفل أو فتح المواعيد لحجز المرضى",
+    "activeSlots": "المواعيد النشطة: {{count}}",
+    "sectionTitle": "مواعيد الاستشارات اليومية",
+    "tooltip": {
+      "unlock": "فتح الموعد لحجز المريض",
+      "lock": "قفل الموعد لمنع الحجز"
+    }
+  },
+  "doctorProfilePage": {
+    "title": "د. {{name}}",
+    "sectionTitle": "الملف الشخصي والاعتمادات المهنية",
+    "successMessage": "تم تحديث بيانات الطبيب!",
+    "form": {
+      "name": "اسم الطبيب",
+      "specialty": "التخصص",
+      "consultationFee": "رسوم الكشفية ($ دولار)",
+      "clinicalEmail": "البريد الإلكتروني السريري",
+      "bio": "السيرة المهنية",
+      "fileUpload": "تحديث الصورة الشخصية أو رخصة الممارسة الطبية (محاكاة رفع الملفات)"
+    },
+    "button": {
+      "save": "حفظ الاعتمادات"
+    }
+  },
+  "doctorMessages": {
+    "sidebar": {
+      "title": "استشارات المرضى",
+      "subtitle": "رسائل مباشرة من المرضى المسجلين"
+    },
+    "chatHeader": {
+      "badge": "استشارة مريض"
+    },
+    "inputPlaceholder": "رد على المريض...",
+    "button": {
+      "send": "إرسال"
+    },
+    "emptyState": "اختر استشارة للبدء."
+  },
+  "adminDashboard": {
+    "badge": "وحدة التحكم التنفيذية",
+    "title": "نظرة عامة على نظام المستشفى",
+    "subtitle": "بيانات فورية عن الأطباء والأقسام والمواعيد وإيرادات المستشفى.",
+    "addDoctor": "إضافة طبيب",
+    "manageDepartments": "إدارة الأقسام",
+    "statCard": {
+      "medicalStaff": "الكادر الطبي",
+      "medicalStaffSubtitle": "الأطباء النشطون",
+      "departments": "الأقسام",
+      "departmentsSubtitle": "وحدات تشغيلية",
+      "totalPatients": "إجمالي المرضى",
+      "appointments": "المواعيد",
+      "appointmentsSubtitle": "{{count}} معلقة",
+      "grossRevenue": "إجمالي الإيرادات",
+      "revenueSubtitle": "المعاملات المدفوعة"
+    },
+    "recentActivity": {
+      "title": "بيانات مواعيد المستشفى الأخيرة",
+      "subtitle": "تغذية حية لحجوزات المرضى عبر جميع الأقسام",
+      "viewAll": "عرض الكل ({{count}})",
+      "columnPatient": "المريض",
+      "columnDoctor": "الطبيب المعالج",
+      "columnSchedule": "الجدول",
+      "columnFee": "الرسوم المدفوعة",
+      "columnStatus": "الحالة",
+      "idLabel": "المعرف: #{{id}}"
+    }
+  },
+  "managePatients": {
+    "title": "إدارة المرضى المسجلين",
+    "subtitle": "إدارة حسابات المرضى وعلامات التعليق",
+    "registeredCount": "مسجل: {{count}}",
+    "idLabel": "المعرف: #{{id}}",
+    "tableHeader": {
+      "patient": "المريض",
+      "email": "البريد الإلكتروني",
+      "phone": "الهاتف",
+      "bloodGroup": "فصيلة الدم",
+      "status": "الحالة",
+      "action": "إجراء"
+    },
+    "status": {
+      "suspended": "موقوف",
+      "active": "حساب نشط"
+    },
+    "button": {
+      "reactivate": "إعادة تنشيط",
+      "suspend": "تعليق الحساب"
+    }
+  },
+  "monitorAppointments": {
+    "title": "مراقبة مواعيد المستشفى",
+    "subtitle": "إشراف المدير وإجراءات الطوارئ لجميع حجوزات المرضى",
+    "searchPlaceholder": "ابحث عن مريض أو طبيب...",
+    "filter": {
+      "allStatuses": "جميع الحالات",
+      "pending": "قيد الانتظار",
+      "confirmed": "مؤكد",
+      "completed": "مكتمل",
+      "cancelled": "ملغي",
+      "rejected": "مرفوض"
+    },
+    "tableHeader": {
+      "id": "معرف الموعد",
+      "patient": "المريض",
+      "doctorDept": "الطبيب والقسم",
+      "dateTime": "التاريخ والوقت",
+      "fee": "الرسوم",
+      "status": "الحالة",
+      "adminAction": "إجراء المدير"
+    },
+    "button": {
+      "approve": "موافقة",
+      "overrideCancel": "إلغاء إداري"
+    }
+  },
+  "manageDepartments": {
+    "title": "إدارة أقسام المستشفى",
+    "subtitle": "تكوين وحدات المستشفى النشطة وحالة الصيانة",
+    "assignedDoctors": "{{count}} طبيب معين",
+    "button": {
+      "add": "إضافة قسم",
+      "cancel": "إلغاء",
+      "save": "حفظ القسم"
+    },
+    "modal": {
+      "addTitle": "إضافة قسم جديد",
+      "editTitle": "تعديل {{name}}"
+    },
+    "form": {
+      "name": "اسم القسم",
+      "status": "حالة التشغيل",
+      "description": "الوصف"
+    },
+    "statusOption": {
+      "active": "نشط (يقبل الحجوزات)",
+      "maintenance": "قيد الصيانة",
+      "closed": "مغلق مؤقتاً"
+    }
+  },
+  "manageDoctors": {
+    "title": "إدارة أطباء المستشفى",
+    "subtitle": "عمليات CRUD كاملة لسجلات الكادر الطبي",
+    "idLabel": "المعرف: #{{id}}",
+    "experienceYears": "{{years}} سنة",
+    "button": {
+      "add": "إضافة طبيب جديد",
+      "cancel": "إلغاء",
+      "save": "حفظ الطبيب"
+    },
+    "tableHeader": {
+      "doctor": "الطبيب",
+      "deptSpecialty": "القسم والتخصص",
+      "experience": "الخبرة",
+      "fee": "الكشفية",
+      "rating": "التقييم",
+      "actions": "إجراءات"
+    },
+    "tooltip": {
+      "edit": "تعديل بيانات الطبيب",
+      "delete": "حذف الطبيب"
+    },
+    "modal": {
+      "addTitle": "إضافة طبيب جديد",
+      "editTitle": "تعديل - {{name}}"
+    },
+    "form": {
+      "name": "اسم الطبيب",
+      "department": "القسم",
+      "specialty": "التخصص",
+      "experience": "الخبرة (سنوات)",
+      "consultationFee": "رسوم الكشفية ($ دولار)",
+      "languages": "اللغات (مفصولة بفواصل)",
+      "bio": "السيرة المهنية",
+      "avatarUpload": "رفع صورة الطبيب"
+    }
+  },
+  "systemSettings": {
+    "title": "الإعدادات العامة للنظام",
+    "subtitle": "تكوين معايير تشغيل المستشفى وقواعد الإلغاء",
+    "successMessage": "تم تحديث القواعد العامة بنجاح!",
+    "section": {
+      "businessRules": "قواعد العمل"
+    },
+    "form": {
+      "cancellationWindow": "الحد الأدنى لنافذة الإلغاء (ساعات)",
+      "cancellationWindowHelp": "لا يمكن للمرضى إلغاء أو تعديل المواعيد خلال هذه الفترة قبل الموعد.",
+      "maxBookings": "الحد الأقصى للحجوزات النشطة لكل مريض",
+      "defaultFee": "رسوم الكشفية الافتراضية ($ دولار)",
+      "emergencyBanner": "نص شريط إشعار الطوارئ"
+    },
+    "button": {
+      "save": "حفظ قواعد النظام"
+    }
+  },
+  "revenuePayments": {
+    "title": "الإيرادات وبوابة الدفع",
+    "subtitle": "التحليلات المالية وإيصالات الاستشارات ومعاملات الدفع",
+    "grossRevenue": "إجمالي الإيرادات",
+    "chart": {
+      "monthlyRevenue": "اتجاه الإيرادات الشهرية (دولار)"
+    },
+    "table": {
+      "title": "سجل المعاملات ({{count}})"
+    },
+    "button": {
+      "exportLedger": "تصدير السجل"
+    },
+    "tableHeader": {
+      "transactionId": "معرف المعاملة",
+      "patient": "المريض",
+      "doctor": "الطبيب",
+      "method": "طريقة الدفع",
+      "date": "التاريخ",
+      "amount": "المبلغ"
+    }
+  },
+  "reportsAnalytics": {
+    "title": "تحليلات وأداء المستشفى",
+    "subtitle": "التوزيع البصري للأطباء حسب القسم وتفصيل المواعيد",
+    "chart": {
+      "doctorsPerDepartment": "الأطباء حسب القسم",
+      "appointmentStatusBreakdown": "تفصيل حالة المواعيد"
+    },
+    "status": {
+      "confirmed": "مؤكد",
+      "completed": "مكتمل",
+      "pending": "معلق",
+      "cancelled": "ملغي"
+    }
+  },
+  "auth": {
+    "defaultUser": {
+      "adminName": "المدير الرئيسي (د. آرثر بندلتون)",
+      "doctorName": "د. روبرت فانس",
+      "patientName": "سارة أحمد"
+    },
+    "error": {
+      "useAuthOutsideProvider": "يجب استخدام useAuth داخل AuthProvider"
+    }
+  },
+  "data": {
+    "fallback": {
+      "doctorName": "طبيب",
+      "specialty": "اختصاصي",
+      "departmentName": "عام"
+    },
+    "defaultUser": {
+      "patientName": "سارة أحمد",
+      "doctorName": "د. روبرت فانس",
+      "adminName": "مدير"
+    },
+    "defaultRecipientName": "المستلم",
+    "error": {
+      "useDataOutsideProvider": "يجب استخدام useData داخل DataProvider"
+    }
+  },
+  "notification": {
+    "appointmentRequestSubmitted": {
+      "title": "تم تقديم طلب الموعد",
+      "message": "حجزك مع {{doctorName}} في {{date}} الساعة {{timeSlot}} قيد انتظار تأكيد الطبيب."
+    },
+    "newPendingBooking": {
+      "title": "حجز جديد قيد الانتظار",
+      "message": "{{patientName}} طلب موعداً في {{date}} الساعة {{timeSlot}}."
+    },
+    "appointmentCancelled": {
+      "title": "تم إلغاء الموعد",
+      "message": "تم إلغاء الموعد #{{id}} مع {{doctorName}}. تمت معالجة الاسترداد."
+    },
+    "appointmentConfirmed": {
+      "title": "تم تأكيد الموعد",
+      "message": "أكد د. {{doctorName}} موعدك في {{date}} الساعة {{timeSlot}}."
+    },
+    "appointmentRejected": {
+      "title": "تم رفض الموعد",
+      "message": "رفض د. {{doctorName}} طلب الحجز الخاص بك. السبب: {{reason}}. تم إصدار الاسترداد."
+    }
+  },
+  "appointment": {
+    "cancelledByUser": "ألغي من قبل المستخدم",
+    "rejectionReason": {
+      "doctorRemoved": "تم حذف ملف الطبيب"
+    }
+  }
+}

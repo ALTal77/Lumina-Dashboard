@@ -1,0 +1,60 @@
+@import "tailwindcss";
+
+@theme {
+  /* Brand / Primary */
+  --color-primary: #0F766E;
+  --color-primary-hover: #0B5B54;
+  --color-primary-tint: #CCFBF1;
+
+  /* Neutrals */
+  --color-page: #F8FAFC;
+  --color-surface: #FFFFFF;
+  --color-border: #E2E8F0;
+  --color-heading: #0F172A;
+  --color-muted: #64748B;
+
+  /* Status */
+  --color-success: #16A34A;
+  --color-success-bg: #DCFCE7;
+  --color-pending: #D97706;
+  --color-pending-bg: #FEF3C7;
+  --color-danger: #DC2626;
+  --color-danger-bg: #FEE2E2;
+  --color-neutral: #64748B;
+  --color-neutral-bg: #F1F5F9;
+
+  /* Role accents (sidebar only) */
+  --color-accent-patient: #0F766E;
+  --color-accent-doctor: #2563EB;
+  --color-accent-admin: #4338CA;
+
+  --font-poppins: "Poppins", system-ui, sans-serif;
+  --font-tajawal: "Tajawal", "Cairo", sans-serif;
+}
+
+::selection {
+  background: #CCFBF1;
+  color: #134E4A;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: "Poppins", system-ui, sans-serif;
+  background-color: #F8FAFC;
+  color: #64748B;
+}
+
+[lang="ar"] body,
+[dir="rtl"] body {
+  font-family: "Tajawal", "Cairo", sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: #0F172A;
+}
