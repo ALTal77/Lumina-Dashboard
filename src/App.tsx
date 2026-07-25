@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import './i18n/i18n';
 import { AuthProvider } from './context/AuthContext';
 import { DataProvider } from './context/DataContext';
@@ -41,7 +41,7 @@ export function App() {
   return (
     <AuthProvider>
       <DataProvider>
-        <BrowserRouter>
+        <HashRouter>
           <Routes>
             {/* Login / Role Selection Page */}
             <Route path="/login" element={<LoginPage />} />
@@ -81,7 +81,7 @@ export function App() {
             {/* Fallback Catch-all */}
             <Route path="*" element={<Navigate to="/login" replace />} />
           </Routes>
-        </BrowserRouter>
+        </HashRouter>
       </DataProvider>
     </AuthProvider>
   );
