@@ -30,7 +30,7 @@ export const StatCard: React.FC<StatCardProps> = ({
       className="bg-surface p-5 rounded-[2rem] border border-border shadow-premium hover:shadow-[0_20px_60px_-10px_rgba(0,0,0,0.12)] hover:border-primary-tint transition-all duration-300"
     >
       <div className="flex items-center justify-between">
-        <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted">
+        <span className="text-xs font-medium text-muted">
           {title}
         </span>
         <div className={`p-2.5 rounded-xl ${bgColor}`}>

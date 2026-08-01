@@ -19,7 +19,7 @@ export const DoctorMessages: React.FC = () => {
   const handleSend = (e: React.FormEvent) => {
     e.preventDefault();
     if (!inputText.trim() || !activeConv) return;
-    sendMessage(user.id, 'doctor', activeConv.participantId, inputText.trim());
+    sendMessage(activeConv.id, user.id, 'doctor', activeConv.participantId, inputText.trim());
     setInputText('');
   };
 
@@ -102,7 +102,7 @@ export const DoctorMessages: React.FC = () => {
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
               placeholder={t('doctorMessages.inputPlaceholder')}
-              className="flex-1 px-3 py-2 text-xs bg-page border border-border rounded-xl text-heading focus:outline-none focus:border-primary"
+              className="flex-1 px-3 py-2 text-xs bg-page border border-border rounded-xl text-heading text-left rtl:text-right placeholder:text-muted focus:outline-none focus:border-primary"
             />
             <button
               type="submit"

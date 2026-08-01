@@ -13,7 +13,7 @@
       "departments": "Browse Departments",
       "doctors": "Find Doctors",
       "appointments": "My Appointments",
-      "messages": "Messages / Inbox",
+      "messages": "Messages Inbox",
       "profile": "Profile & Settings"
     },
     "doctor": {
@@ -21,7 +21,7 @@
       "appointments": "Appointment Requests",
       "schedule": "Weekly Schedule",
       "patients": "Patient Records",
-      "messages": "Messages / Inbox",
+      "messages": "Messages Inbox",
       "profile": "Profile & Settings"
     },
     "admin": {
@@ -439,7 +439,7 @@
   },
   "doctorDashboard": {
     "badge": "Clinical Portal",
-    "title": "Dr. {{name}}",
+    "title": "{{name}}",
     "subtitle": "{{specialty}} • You have {{count}} pending requests awaiting approval today.",
     "button": {
       "manageSchedule": "Manage Weekly Schedule"
@@ -449,7 +449,7 @@
       "pendingRequestsSubtitle": "Action required",
       "confirmedAppointments": "Confirmed Appointments",
       "completedVisits": "Completed Visits",
-      "totalIncome": "Total Practice Income"
+      "totalPracticeIncome": "Total Practice Income"
     },
     "urgent": {
       "title": "Urgent: Pending Patient Requests ({{count}})",
@@ -458,11 +458,13 @@
     "button": {
       "approve": "Approve",
       "review": "Review",
-      "markCompleted": "Mark Completed"
+      "markCompleted": "Mark Completed",
+      "manageSchedule": "Manage Schedule"
     },
     "upcomingVisits": {
       "title": "Upcoming Confirmed Visits",
       "viewAll": "View All ({{count}})",
+      "visitInfo": "{{date}} • {{timeSlot}} • Fee: ${{fee}}",
       "empty": "No confirmed patient visits scheduled right now."
     }
   },

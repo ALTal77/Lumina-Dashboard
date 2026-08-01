@@ -16,7 +16,8 @@ export const DoctorDashboard: React.FC = () => {
   };
   const navigate = useNavigate();
 
-  const doctorSpecialty =(user as unknown as Doctor).specialty || "General Practitioner";
+  const doctorSpecialty =
+    (user as unknown as Doctor).specialty || "General Practitioner";
 
   const myAppointments = appointments.filter((a) => a.doctorId === user.id);
   const pendingRequests = myAppointments.filter((a) => a.status === "pending");
@@ -36,9 +37,6 @@ export const DoctorDashboard: React.FC = () => {
       <div className="bg-surface text-heading rounded-2xl p-6 shadow-md border border-border">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <span className="px-2.5 py-0.5 rounded-full bg-primary-tint text-primary border border-primary text-[10px] font-bold uppercase tracking-wider inline-block mb-2">
-              {t("doctorDashboard.badge")}
-            </span>
             <h1 className="text-2xl font-black tracking-tight text-heading">
               {t("doctorDashboard.title", { name: user.name })}
             </h1>
@@ -118,10 +116,7 @@ export const DoctorDashboard: React.FC = () => {
                 className="bg-surface p-3 rounded-xl border border-pending-bg flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs"
               >
                 <div>
-                  <h4
-                    className="font-bold text-heading"
-                    dir="auto"
-                  >
+                  <h4 className="font-bold text-heading" dir="auto">
                     {req.patientName}
                   </h4>
                   <p className="text-[11px] text-muted">
@@ -186,16 +181,17 @@ export const DoctorDashboard: React.FC = () => {
               >
                 <div>
                   <div className="flex items-center gap-2">
-                    <span
-                      className="font-bold text-heading"
-                      dir="auto"
-                    >
+                    <span className="font-bold text-heading" dir="auto">
                       {apt.patientName}
                     </span>
                     <StatusPill status={apt.status} />
                   </div>
                   <p className="text-[11px] text-muted mt-0.5">
-                    {apt.date} • {apt.timeSlot} • Fee: ${apt.consultationFee}
+                    {t("doctorDashboard.upcomingVisits.visitInfo", {
+                      date: apt.date,
+                      timeSlot: apt.timeSlot,
+                      fee: apt.consultationFee,
+                    })}
                   </p>
                 </div>
 

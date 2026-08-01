@@ -26,7 +26,7 @@ export const DoctorSchedule: React.FC = () => {
       </div>
 
       <div className="bg-surface rounded-2xl border border-border p-5 space-y-4">
-        <h3 className="text-xs font-bold text-heading uppercase tracking-wider">
+        <h3 className="text-sm font-bold text-heading ">
           {t('doctorSchedule.sectionTitle')}
         </h3>
 

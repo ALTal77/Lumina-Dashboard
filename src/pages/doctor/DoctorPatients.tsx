@@ -4,11 +4,11 @@ import { Plus } from "lucide-react";
 import { useData } from "../../context/DataContext";
 import { useAuth } from "../../context/AuthContext";
 import { Modal } from "../../components/shared/Modal";
-import { Patient } from "../../types";
+import { Doctor, Patient } from "../../types";
 
 export const DoctorPatients: React.FC = () => {
   const { user } = useAuth();
-  const { medicalRecords, addMedicalRecord, patients } = useData() as any;
+  const { medicalRecords, addMedicalNote, patients } = useData();
   const { t } = useTranslation() as {
     t: (key: string, options?: any) => string;
   };
@@ -34,19 +34,18 @@ export const DoctorPatients: React.FC = () => {
     e.preventDefault();
     if (!diagnosis || !activePatient) return;
 
-    if (addMedicalRecord) {
-      addMedicalRecord({
-        patientId: activePatient.id,
-        patientName: activePatient.name,
-        doctorId: user.id,
-        doctorName: user.name,
-        doctorSpecialty: (user as any).specialty || "General Practice",
-        date: new Date().toISOString().split("T")[0],
-        diagnosis,
-        prescription,
-        note: clinicalNotes,
-      });
-    }
+    addMedicalNote({
+      patientId: activePatient.id,
+      patientName: activePatient.name,
+      doctorId: user.id,
+      doctorName: user.name,
+      doctorSpecialty:
+        (user as unknown as Doctor).specialty || "General Practice",
+      date: new Date().toISOString().split("T")[0],
+      diagnosis,
+      prescription,
+      note: clinicalNotes,
+    });
 
     setShowAddRecordModal(false);
     setDiagnosis("");
@@ -77,7 +76,7 @@ export const DoctorPatients: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         {/* Patient Selection List */}
         <div className="bg-surface rounded-2xl border border-border p-4 space-y-3">
-          <h3 className="text-xs font-bold text-heading uppercase tracking-wider">
+          <h3 className="text-sm font-bold text-heading  ">
             {t("doctorPatients.selectPatient")}
           </h3>
           <div className="space-y-1 max-h-96 overflow-y-auto">
@@ -112,18 +111,9 @@ export const DoctorPatients: React.FC = () => {
           {activePatient && (
             <div className="pb-3 border-b border-border flex justify-between items-center">
               <div>
-                <h2
-                  className="text-base font-bold text-heading"
-                  dir="auto"
-                >
+                <h2 className="text-base font-bold text-heading" dir="auto">
                   {activePatient.name}
                 </h2>
-                <p className="text-xs text-muted">
-                  {t("doctorPatients.patientInfo", {
-                    gender: activePatient.gender || "N/A",
-                    bloodGroup: activePatient.bloodGroup || "N/A",
-                  })}
-                </p>
               </div>
               <span className="text-xs font-mono font-bold text-muted">
                 {t("doctorPatients.patientIdLabel", { id: activePatient.id })}
@@ -131,7 +121,7 @@ export const DoctorPatients: React.FC = () => {
             </div>
           )}
 
-          <h3 className="text-xs font-bold text-heading uppercase tracking-wider">
+          <h3 className="text-sm font-bold text-heading">
             {t("doctorPatients.recordedConsultations", {
               count: patientRecords.length,
             })}
@@ -158,9 +148,7 @@ export const DoctorPatients: React.FC = () => {
                     <span className="text-[10px] text-muted uppercase font-semibold block">
                       {t("doctorPatients.record.diagnosis")}
                     </span>
-                    <p className="font-bold text-heading">
-                      {rec.diagnosis}
-                    </p>
+                    <p className="font-bold text-heading">{rec.diagnosis}</p>
                   </div>
                   {rec.prescription && (
                     <div>
@@ -173,10 +161,10 @@ export const DoctorPatients: React.FC = () => {
                     </div>
                   )}
                   {rec.note && (
-                <p
-                  className="text-muted italic pt-1 border-t border-border"
-                  dir="auto"
-                >
+                    <p
+                      className="text-muted italic pt-1 border-t border-border"
+                      dir="auto"
+                    >
                       {t("doctorPatients.record.notes", { notes: rec.note })}
                     </p>
                   )}
@@ -197,43 +185,41 @@ export const DoctorPatients: React.FC = () => {
           <form onSubmit={handleCreateRecord} className="space-y-4">
             <div>
               <label className="block text-xs font-semibold text-muted mb-1">
-                {t("doctorPatients.modal.label.diagnosis")}
+                {t("doctorPatients.modal.diagnosisLabel")}
               </label>
               <input
                 type="text"
                 required
                 value={diagnosis}
                 onChange={(e) => setDiagnosis(e.target.value)}
-                placeholder={t("doctorPatients.modal.placeholder.diagnosis")}
-                className="w-full p-2.5 text-xs bg-page border border-border rounded-xl text-heading"
+                placeholder={t("doctorPatients.modal.diagnosisPlaceholder")}
+                className="w-full p-2.5 text-xs bg-page border border-border rounded-xl text-heading text-left rtl:text-right placeholder:text-muted"
               />
             </div>
 
             <div>
               <label className="block text-xs font-semibold text-muted mb-1">
-                {t("doctorPatients.modal.label.prescription")}
+                {t("doctorPatients.modal.prescriptionLabel")}
               </label>
               <textarea
                 rows={2}
                 value={prescription}
                 onChange={(e) => setPrescription(e.target.value)}
-                placeholder={t("doctorPatients.modal.placeholder.prescription")}
-                className="w-full p-2.5 text-xs bg-page border border-border rounded-xl text-heading"
+                placeholder={t("doctorPatients.modal.prescriptionPlaceholder")}
+                className="w-full p-2.5 text-xs bg-page border border-border rounded-xl text-heading text-left rtl:text-right placeholder:text-muted"
               />
             </div>
 
             <div>
               <label className="block text-xs font-semibold text-muted mb-1">
-                {t("doctorPatients.modal.label.clinicalNotes")}
+                {t("doctorPatients.modal.notesLabel")}
               </label>
               <textarea
                 rows={3}
                 value={clinicalNotes}
                 onChange={(e) => setClinicalNotes(e.target.value)}
-                placeholder={t(
-                  "doctorPatients.modal.placeholder.clinicalNotes",
-                )}
-                className="w-full p-2.5 text-xs bg-page border border-border rounded-xl text-heading"
+                placeholder={t("doctorPatients.modal.notesPlaceholder")}
+                className="w-full p-2.5 text-xs bg-page border border-border rounded-xl text-heading text-left rtl:text-right placeholder:text-muted"
               />
             </div>
 

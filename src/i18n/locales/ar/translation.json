@@ -13,7 +13,7 @@
       "departments": "تصفح الأقسام",
       "doctors": "البحث عن أطباء",
       "appointments": "مواعيدي",
-      "messages": "الرسائل / البريد الوارد",
+      "messages": "الرسائل البريد الوارد",
       "profile": "الملف الشخصي والإعدادات"
     },
     "doctor": {
@@ -21,7 +21,7 @@
       "appointments": "طلبات المواعيد",
       "schedule": "الجدول الأسبوعي",
       "patients": "سجلات المرضى",
-      "messages": "الرسائل / البريد الوارد",
+      "messages": "الرسائل البريد الوارد",
       "profile": "الملف الشخصي والإعدادات"
     },
     "admin": {
@@ -449,7 +449,7 @@
       "pendingRequestsSubtitle": "بحاجة إلى إجراء",
       "confirmedAppointments": "المواعيد المؤكدة",
       "completedVisits": "الزيارات المكتملة",
-      "totalIncome": "إجمالي الدخل"
+      "totalPracticeIncome": "إجمالي الدخل"
     },
     "urgent": {
       "title": "عاجل: طلبات المرضى المعلقة ({{count}})",
@@ -458,11 +458,13 @@
     "button": {
       "approve": "موافقة",
       "review": "مراجعة",
-      "markCompleted": "تحديد كمكتمل"
+      "markCompleted": "تحديد كمكتمل",
+      "manageSchedule": "إدارة الجدول"
     },
     "upcomingVisits": {
       "title": "الزيارات المؤكدة القادمة",
       "viewAll": "عرض الكل ({{count}})",
+      "visitInfo": "{{date}} • {{timeSlot}} • رسوم الكشف: ${{fee}}",
       "empty": "لا توجد زيارات مؤكدة مجدولة حالياً."
     }
   },

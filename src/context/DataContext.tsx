@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from './AuthContext';
 import {
   User,
   Department,
@@ -92,7 +93,7 @@ interface DataContextType {
 
   toggleSlotLock: (slotId: string) => void;
   togglePatientSuspension: (patientId: string) => void;
-  sendMessage: (senderId: string, senderRole: 'patient' | 'doctor' | 'admin', receiverId: string, content: string) => void;
+  sendMessage: (conversationId: string, senderId: string, senderRole: 'patient' | 'doctor' | 'admin', receiverId: string, content: string) => void;
   addMedicalNote: (record: Omit<MedicalRecord, 'id'>) => void;
   addRating: (rating: Omit<Rating, 'id' | 'date'>) => void;
   updateDoctorSchedule: (doctorId: string, slots: TimeSlot[]) => void;
@@ -104,6 +105,7 @@ const DataContext = createContext<DataContextType | undefined>(undefined);
 
 export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { i18n } = useTranslation();
+  const { user: currentUser } = useAuth();
   const isAr = i18n.language === 'ar';
 
   const [patients, setPatients] = useState<User[]>(isAr ? mockPatientsAr : mockPatients);
@@ -401,23 +403,34 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   // 10. Messages
-  const sendMessage = (senderId: string, senderRole: 'patient' | 'doctor' | 'admin', receiverId: string, content: string) => {
+  const sendMessage = (conversationId: string, senderId: string, senderRole: 'patient' | 'doctor' | 'admin', receiverId: string, content: string) => {
     // TODO: connect to Express API (POST /api/messages)
+    const conv = conversations.find((c) => c.id === conversationId);
+    const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     const newMsg: Message = {
       id: `msg-${Date.now()}`,
-      conversationId: `conv-${senderId}-${receiverId}`,
+      conversationId,
       senderId,
-      senderName: senderRole === 'patient' ? 'Sarah Jenkins' : senderRole === 'doctor' ? 'Dr. Robert Vance' : 'Admin',
+      senderName: currentUser.name,
       senderRole,
-      senderAvatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80',
+      senderAvatar: currentUser.avatar,
       receiverId,
-      receiverName: 'Recipient',
+      receiverName: conv?.participantName || 'Recipient',
       content,
       isRead: false,
-      sentAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      sentAt: now,
     };
 
     setMessages((prev) => [...prev, newMsg]);
+
+    // Update the conversation preview (last message + timestamp)
+    setConversations((prev) =>
+      prev.map((c) =>
+        c.id === conversationId
+          ? { ...c, lastMessage: content, lastMessageTime: now }
+          : c
+      )
+    );
   };
 
   // 11. Add Medical Note

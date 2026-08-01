@@ -107,14 +107,14 @@ export const DoctorAppointments: React.FC = () => {
           <div className="space-y-4">
             <div>
               <label className="block text-xs font-semibold text-muted mb-1">
-                {t('doctorAppointments.rejectModal.label')}
+                {t('doctorAppointments.rejectModal.reasonLabel')}
               </label>
               <textarea
                 rows={3}
                 value={rejectReason}
                 onChange={(e) => setRejectReason(e.target.value)}
                 placeholder={t('doctorAppointments.rejectModal.placeholder')}
-                className="w-full p-2.5 text-xs bg-page border border-border rounded-xl text-heading"
+                className="w-full p-2.5 text-xs bg-page border border-border rounded-xl text-heading text-left rtl:text-right placeholder:text-muted"
               />
             </div>
 

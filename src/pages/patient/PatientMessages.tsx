@@ -19,7 +19,7 @@ export const PatientMessages: React.FC = () => {
   const handleSend = (e: React.FormEvent) => {
     e.preventDefault();
     if (!inputText.trim() || !activeConv) return;
-    sendMessage(user.id, 'patient', activeConv.participantId, inputText.trim());
+    sendMessage(activeConv.id, user.id, 'patient', activeConv.participantId, inputText.trim());
     setInputText('');
   };
 
