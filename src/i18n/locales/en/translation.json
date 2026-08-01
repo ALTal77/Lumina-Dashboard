@@ -41,7 +41,7 @@
     "brandName": "Lumina Health",
     "version": "Hospital System v2.4",
     "badge": {
-      "admin": "Admin Core",
+      "admin": "Admin",
       "doctor": "Clinical Portal",
       "patient": "Patient Workspace"
     },
@@ -684,13 +684,25 @@
     },
     "form": {
       "name": "Doctor Name",
+      "email": "Email Address",
+      "phone": "Phone Number",
       "department": "Department",
       "specialty": "Specialty",
       "experience": "Experience (Years)",
       "consultationFee": "Consultation Fee ($ USD)",
-      "languages": "Languages (Comma separated)",
+      "languages": "Languages",
       "bio": "Professional Bio",
-      "avatarUpload": "Doctor Avatar Picture Upload"
+      "avatarUpload": "Doctor Avatar Picture Upload",
+      "placeholder": {
+        "name": "e.g. Dr. John Smith",
+        "email": "doctor@hospital.org",
+        "phone": "+1 (555) 000-0000",
+        "specialty": "e.g. Cardiologist",
+        "experience": "e.g. 10",
+        "consultationFee": "e.g. 150",
+        "languages": "e.g. English, Arabic",
+        "bio": "e.g. Board-certified cardiologist with 15+ years..."
+      }
     }
   },
   "systemSettings": {

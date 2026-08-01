@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import fullLogo from "../../assets/images/full.png";
 import {
   LayoutDashboard,
   Building2,
@@ -17,11 +18,12 @@ import {
   Sliders,
 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
-import { Avatar } from "../shared/Avatar";
 
 export const Sidebar: React.FC = () => {
   const { t, i18n } = useTranslation();
   const { role, user, logout } = useAuth();
+  const navigate = useNavigate();
+  const [logoError, setLogoError] = useState(false);
 
   const patientNav = [
     {
@@ -142,30 +144,23 @@ export const Sidebar: React.FC = () => {
   return (
     <aside className="w-64 bg-heading text-white/70 flex flex-col h-full flex-shrink-0 border-r rtl:border-l rtl:border-r-0 border-heading select-none">
       <div className="p-5 flex items-center gap-3 border-b border-heading">
-        <img
-          src="/src/assets/images/full.png"
-          alt={t("sidebar.logoAlt")}
-          className="h-auto w-full object-contain bg-white rounded-lg"
-          onError={(e) => {
-            (e.target as HTMLImageElement).style.display = "none";
-            const parent = (e.target as HTMLImageElement).parentElement!;
-            const fallback = document.createElement("div");
-            fallback.className =
-              "w-9 h-9 bg-primary rounded-xl flex items-center justify-center font-black text-white text-base shadow-md";
-            fallback.textContent = t("sidebar.logoFallback");
-            parent.prepend(fallback);
-          }}
-        />
+        {logoError ? (
+          <div className="w-9 h-9 bg-primary rounded-xl flex items-center justify-center font-black text-white text-base shadow-md">
+            {t("sidebar.logoFallback")}
+          </div>
+        ) : (
+          <img
+            src={fullLogo}
+            alt={t("sidebar.logoAlt")}
+            className="h-auto w-full object-contain bg-white rounded-lg"
+            onError={() => setLogoError(true)}
+          />
+        )}
       </div>
 
       <div className="px-4 pt-4 pb-2">
-        <div className="text-muted text-[10px] font-bold uppercase tracking-widest px-2 mb-2 flex items-center justify-between">
+        <div className="text-white text-xs font-semibold tracking-widest px-2 mb-2 flex items-center justify-between">
           <span>{badge.label}</span>
-          <span
-            className={`px-1.5 py-0.2 rounded text-[9px] font-black uppercase ${badge.bg}`}
-          >
-            {role}
-          </span>
         </div>
 
         <nav className="space-y-1">
@@ -178,8 +173,8 @@ export const Sidebar: React.FC = () => {
                 className={({ isActive }) =>
                   `flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold transition-all ${
                     isActive
-                      ? `${roleAccentBg} text-white shadow-sm font-bold`
-                      : "text-white/70 hover:bg-heading hover:text-white"
+                      ? ` text-white shadow-sm font-bold bg-accent-patient`
+                      : "text-white/70  hover:text-white"
                   }`
                 }
               >
@@ -195,7 +190,10 @@ export const Sidebar: React.FC = () => {
 
       <div className="p-4 border-t border-heading bg-heading/80">
         <button
-          onClick={logout}
+          onClick={() => {
+            logout();
+            navigate("/login");
+          }}
           title={t("sidebar.logoutTooltip")}
           className="flex items-center cursor-pointer justify-center gap-2 w-full p-2.5 text-muted hover:text-danger hover:bg-heading/50 rounded-xl border border-heading/50 transition-colors"
         >

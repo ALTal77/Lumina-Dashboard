@@ -684,13 +684,25 @@
     },
     "form": {
       "name": "اسم الطبيب",
+      "email": "البريد الإلكتروني",
+      "phone": "رقم الهاتف",
       "department": "القسم",
       "specialty": "التخصص",
       "experience": "الخبرة (سنوات)",
       "consultationFee": "رسوم الكشفية ($ دولار)",
       "languages": "اللغات (مفصولة بفواصل)",
       "bio": "السيرة المهنية",
-      "avatarUpload": "رفع صورة الطبيب"
+      "avatarUpload": "رفع صورة الطبيب",
+      "placeholder": {
+        "name": "مثال: د. جون سميث",
+        "email": "doctor@hospital.org",
+        "phone": "+1 (555) 000-0000",
+        "specialty": "مثال: طبيب قلب",
+        "experience": "مثال: 10",
+        "consultationFee": "مثال: 150",
+        "languages": "مثال: الإنجليزية، العربية",
+        "bio": "مثال: طبيب قلب معتمد بخبرة تزيد عن 15 عامًا..."
+      }
     }
   },
   "systemSettings": {

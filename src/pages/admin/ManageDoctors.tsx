@@ -25,30 +25,24 @@ export const ManageDoctors: React.FC = () => {
     departments[0]?.id || "dept-1",
   );
   const [specialty, setSpecialty] = useState("");
-  const [yearsExperience, setYearsExperience] = useState(5);
-  const [consultationFee, setConsultationFee] = useState(100);
-  const [languages, setLanguages] = useState("English, Spanish");
+  const [yearsExperience, setYearsExperience] = useState<number | string>("");
+  const [consultationFee, setConsultationFee] = useState<number | string>("");
+  const [languages, setLanguages] = useState("");
   const [bio, setBio] = useState("");
-  const [profilePicture, setProfilePicture] = useState(
-    "https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=200",
-  );
+  const [profilePicture, setProfilePicture] = useState("");
 
   const openAddModal = () => {
     setEditingDoctor(null);
     setName("");
-    setEmail("dr.new@lumina.health");
-    setPhone("+1 (555) 019-2831");
+    setEmail("");
+    setPhone("");
     setDepartmentId(departments[0]?.id || "dept-1");
-    setSpecialty("General Medicine");
-    setYearsExperience(5);
-    setConsultationFee(120);
-    setLanguages("English, Arabic");
-    setBio(
-      "Experienced physician dedicated to patient-centered clinical care.",
-    );
-    setProfilePicture(
-      "https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=200",
-    );
+    setSpecialty("");
+    setYearsExperience("");
+    setConsultationFee("");
+    setLanguages("");
+    setBio("");
+    setProfilePicture("");
     setIsModalOpen(true);
   };
 
@@ -79,9 +73,12 @@ export const ManageDoctors: React.FC = () => {
       departmentId,
       departmentName: deptName,
       specialty,
-      yearsExperience,
-      consultationFee,
-      languages: languages.split(",").map((s) => s.trim()),
+      yearsExperience: Number(yearsExperience) || 0,
+      consultationFee: Number(consultationFee) || 0,
+      languages: languages
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean),
       bio,
       profilePicture,
       availableDays: ["Mon", "Tue", "Wed", "Thu", "Fri"],
@@ -149,11 +146,22 @@ export const ManageDoctors: React.FC = () => {
                 >
                   <td className="p-3">
                     <div className="flex items-center gap-3">
-                      <img
-                        src={doc.profilePicture}
-                        alt={doc.name}
-                        className="w-9 h-9 rounded-xl object-cover border border-border"
-                      />
+                      {doc.profilePicture ? (
+                        <img
+                          src={doc.profilePicture}
+                          alt={doc.name}
+                          className="w-9 h-9 rounded-xl object-cover border border-border"
+                        />
+                      ) : (
+                        <div className="w-9 h-9 rounded-xl bg-primary-tint text-primary font-bold flex items-center justify-center border border-primary-tint">
+                          {doc.name
+                            .split(" ")
+                            .map((n) => n[0])
+                            .join("")
+                            .substring(0, 2)
+                            .toUpperCase()}
+                        </div>
+                      )}
                       <div>
                         <div className="font-bold text-heading">
                           {doc.name}
@@ -234,33 +242,36 @@ export const ManageDoctors: React.FC = () => {
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full p-2 bg-page border border-border rounded-lg text-heading"
+                  placeholder={t("manageDoctors.form.placeholder.name")}
+                  className="w-full p-2 bg-page border border-border rounded-lg text-heading text-left rtl:text-right placeholder:text-muted"
                 />
               </div>
 
               <div>
                 <label className="block font-semibold text-heading mb-1">
-                  Email
+                  {t("manageDoctors.form.email")}
                 </label>
                 <input
                   type="email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full p-2 bg-page border border-border rounded-lg text-heading"
+                  placeholder={t("manageDoctors.form.placeholder.email")}
+                  className="w-full p-2 bg-page border border-border rounded-lg text-heading text-left rtl:text-right placeholder:text-muted"
                 />
               </div>
 
               <div>
                 <label className="block font-semibold text-heading mb-1">
-                  Phone
+                  {t("manageDoctors.form.phone")}
                 </label>
                 <input
                   type="text"
                   required
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  className="w-full p-2 bg-page border border-border rounded-lg text-heading"
+                  placeholder={t("manageDoctors.form.placeholder.phone")}
+                  className="w-full p-2 bg-page border border-border rounded-lg text-heading text-left rtl:text-right placeholder:text-muted"
                 />
               </div>
 
@@ -271,7 +282,7 @@ export const ManageDoctors: React.FC = () => {
                 <select
                   value={departmentId}
                   onChange={(e) => setDepartmentId(e.target.value)}
-                  className="w-full p-2 bg-page border border-border rounded-lg text-heading"
+                  className="w-full p-2 bg-page border border-border rounded-lg text-heading text-left rtl:text-right"
                 >
                   {departments.map((d) => (
                     <option key={d.id} value={d.id}>
@@ -290,7 +301,8 @@ export const ManageDoctors: React.FC = () => {
                   required
                   value={specialty}
                   onChange={(e) => setSpecialty(e.target.value)}
-                  className="w-full p-2 bg-page border border-border rounded-lg text-heading"
+                  placeholder={t("manageDoctors.form.placeholder.specialty")}
+                  className="w-full p-2 bg-page border border-border rounded-lg text-heading text-left rtl:text-right placeholder:text-muted"
                 />
               </div>
 
@@ -301,9 +313,11 @@ export const ManageDoctors: React.FC = () => {
                 <input
                   type="number"
                   required
+                  min={0}
                   value={yearsExperience}
-                  onChange={(e) => setYearsExperience(Number(e.target.value))}
-                  className="w-full p-2 bg-page border border-border rounded-lg text-heading"
+                  onChange={(e) => setYearsExperience(e.target.value)}
+                  placeholder={t("manageDoctors.form.placeholder.experience")}
+                  className="w-full p-2 bg-page border border-border rounded-lg text-heading text-left rtl:text-right placeholder:text-muted"
                 />
               </div>
 
@@ -314,9 +328,11 @@ export const ManageDoctors: React.FC = () => {
                 <input
                   type="number"
                   required
+                  min={0}
                   value={consultationFee}
-                  onChange={(e) => setConsultationFee(Number(e.target.value))}
-                  className="w-full p-2 bg-page border border-border rounded-lg text-heading"
+                  onChange={(e) => setConsultationFee(e.target.value)}
+                  placeholder={t("manageDoctors.form.placeholder.consultationFee")}
+                  className="w-full p-2 bg-page border border-border rounded-lg text-heading text-left rtl:text-right placeholder:text-muted"
                 />
               </div>
 
@@ -328,7 +344,8 @@ export const ManageDoctors: React.FC = () => {
                   type="text"
                   value={languages}
                   onChange={(e) => setLanguages(e.target.value)}
-                  className="w-full p-2 bg-page border border-border rounded-lg text-heading"
+                  placeholder={t("manageDoctors.form.placeholder.languages")}
+                  className="w-full p-2 bg-page border border-border rounded-lg text-heading text-left rtl:text-right placeholder:text-muted"
                 />
               </div>
             </div>
@@ -341,7 +358,8 @@ export const ManageDoctors: React.FC = () => {
                 rows={2}
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
-                className="w-full p-2 bg-page border border-border rounded-lg text-heading"
+                placeholder={t("manageDoctors.form.placeholder.bio")}
+                className="w-full p-2 bg-page border border-border rounded-lg text-heading text-left rtl:text-right placeholder:text-muted"
               />
             </div>
 

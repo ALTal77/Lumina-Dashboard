@@ -1,16 +1,7 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
-import {
-  Bell,
-  Globe,
-  Search,
-  ShieldCheck,
-  Activity,
-  CheckCircle2,
-  X,
-  ChevronDown,
-} from "lucide-react";
+import { Bell, Globe, X } from "lucide-react";
 import { Sidebar } from "./Sidebar";
 import { useAuth } from "../../context/AuthContext";
 import { useData } from "../../context/DataContext";
@@ -92,17 +83,17 @@ export const AppShell: React.FC = () => {
       <div className="flex-1 flex flex-col h-full min-w-0 overflow-hidden relative">
         {/* Glass Navbar */}
         <header
-          className="h-16 flex-shrink-0 z-10 mx-4 mt-3 px-6 flex items-center justify-between"
+          className="h-16 flex-shrink-0 z-40 mx-4 mt-3 px-6 flex items-center justify-between"
           style={{
-            background: "rgba(255,255,255,0.7)",
-            backdropFilter: "blur(12px)",
-            border: "1px solid rgba(255,255,255,0.4)",
+            background: "rgba(15,118,110,0.92)",
+            backdropFilter: "blur(16px)",
+            border: "1px solid rgba(204,251,241,0.35)",
             borderRadius: "2rem",
-            boxShadow: "0 8px 32px 0 rgba(15,23,42,0.05)",
+            boxShadow: "0 8px 32px 0 rgba(15,118,110,0.28)",
           }}
         >
           <div className="flex items-center gap-4 min-w-0">
-            <h1 className="text-base font-black text-heading truncate tracking-tight">
+            <h1 className="text-base font-black text-white truncate tracking-tight">
               {getPageTitle()}
             </h1>
           </div>
@@ -111,7 +102,7 @@ export const AppShell: React.FC = () => {
             <button
               onClick={toggleRTL}
               title={t("navbar.direction.tooltip", { dir: dir.toUpperCase() })}
-              className="flex cursor-pointer items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-muted hover:text-heading border border-border hover:border-border rounded-full transition-colors"
+              className="flex cursor-pointer items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-white/70 hover:text-white border border-white/25 hover:border-white/50 rounded-full transition-colors"
             >
               <Globe className="w-3.5 h-3.5" />
               <span>{dir === "ltr" ? "EN" : "AR"}</span>
@@ -120,7 +111,7 @@ export const AppShell: React.FC = () => {
             <div className="relative">
               <button
                 onClick={() => setShowNotifications(!showNotifications)}
-                className="w-8 h-8 bg-neutral-bg cursor-pointer hover:bg-primary-tint rounded-full flex items-center justify-center text-muted relative transition-colors"
+                className="w-8 h-8 bg-white/10 cursor-pointer hover:bg-white/20 rounded-full flex items-center justify-center text-white/80 hover:text-white relative transition-colors"
               >
                 <Bell className="w-4 h-4" />
                 {unreadCount > 0 && (
@@ -134,11 +125,11 @@ export const AppShell: React.FC = () => {
                 <div
                   className="absolute right-0 rtl:right-auto rtl:left-0 mt-2 w-80 bg-white border border-border overflow-hidden z-50"
                   style={{
-                    borderRadius: "2rem",
+                    borderRadius: "0.5rem",
                     boxShadow: "var(--shadow-premium)",
                   }}
                 >
-                  <div className="p-3 border-b border-border flex items-center justify-between bg-page/80">
+                  <div className="p-3 border-b border-border flex items-center justify-between bg-page">
                     <h4 className="text-xs font-bold text-heading">
                       {t("navbar.notifications.heading")}
                     </h4>
@@ -185,7 +176,6 @@ export const AppShell: React.FC = () => {
         </header>
 
         <main className="flex-1 overflow-y-auto p-4 sm:p-6 bg-surface relative">
-          {/* Decorative background blob behind content */}
           <div
             className="absolute bottom-0 left-0 rtl:right-0 rtl:left-auto w-[400px] h-[400px] rounded-full pointer-events-none"
             style={{
@@ -195,17 +185,6 @@ export const AppShell: React.FC = () => {
           />
           <Outlet />
         </main>
-
-        <footer className="h-10 bg-heading text-white flex items-center justify-between px-6 text-[10px] font-medium flex-shrink-0 select-none">
-          <div className="flex items-center gap-4"></div>
-          <div className="flex items-center gap-3 text-muted">
-            <span>{t("footer.brand")}</span>
-            <span>{t("footer.separator")}</span>
-            <span className="text-primary font-bold uppercase">
-              {t("footer.roleView", { role })}
-            </span>
-          </div>
-        </footer>
       </div>
     </div>
   );

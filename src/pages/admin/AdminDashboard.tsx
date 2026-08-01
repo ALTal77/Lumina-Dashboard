@@ -30,17 +30,26 @@ export const AdminDashboard: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Welcome Banner */}
-      <div className="bg-page text-white rounded-2xl p-6 shadow-md border border-heading">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="relative overflow-hidden bg-gradient-to-br from-primary to-primary-hover text-white rounded-2xl p-6 shadow-lg border border-border">
+        {/* Decorative blobs */}
+        <div
+          className="absolute -top-24 -right-16 rtl:-left-16 rtl:-right-auto w-72 h-72 rounded-full pointer-events-none"
+          style={{ background: "rgba(255,255,255,0.14)", filter: "blur(90px)" }}
+        />
+        <div
+          className="absolute -bottom-28 -left-10 rtl:-right-10 rtl:-left-auto w-64 h-64 rounded-full pointer-events-none"
+          style={{ background: "rgba(255,255,255,0.08)", filter: "blur(90px)" }}
+        />
+
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <span className="px-2.5 py-0.5 rounded-full bg-primary/20 text-primary border border-primary/30 text-[10px] font-bold uppercase tracking-wider inline-block mb-2">
+            <span className="px-2.5 py-0.5 rounded-full bg-white/15 text-white border border-white/30 text-[10px] font-bold uppercase tracking-wider inline-block mb-2 backdrop-blur-sm">
               {t("adminDashboard.badge")}
             </span>
-            <h1 className="text-2xl font-black tracking-tight">
+            <h1 className="text-2xl font-black tracking-tight text-white">
               {t("adminDashboard.title")}
             </h1>
-            <p className="text-muted text-xs mt-1">
+            <p className="text-white/80 text-xs mt-1">
               {t("adminDashboard.subtitle")}
             </p>
           </div>
@@ -48,13 +57,13 @@ export const AdminDashboard: React.FC = () => {
           <div className="flex items-center gap-2">
             <button
               onClick={() => navigate("/admin/doctors")}
-              className="px-3.5 py-2 bg-primary hover:bg-primary-hover text-white text-xs font-bold rounded-xl transition-colors shadow-md flex items-center gap-1.5"
+              className="px-3.5 py-2 bg-white text-primary hover:bg-primary-tint text-xs font-bold rounded-xl transition-all shadow-md flex items-center gap-1.5 hover:-translate-y-0.5"
             >
               <Plus className="w-4 h-4" /> {t("adminDashboard.addDoctor")}
             </button>
             <button
               onClick={() => navigate("/admin/departments")}
-              className="px-3.5 py-2 bg-heading hover:bg-heading text-white text-xs font-bold rounded-xl border border-heading transition-colors flex items-center gap-1.5"
+              className="px-3.5 py-2 bg-white/15 hover:bg-white/25 text-white text-xs font-bold rounded-xl border border-white/30 backdrop-blur-sm transition-all flex items-center gap-1.5 hover:-translate-y-0.5"
             >
               <Building2 className="w-4 h-4" />{" "}
               {t("adminDashboard.manageDepartments")}
@@ -172,9 +181,7 @@ export const AdminDashboard: React.FC = () => {
               render: (item) => (
                 <div className="text-xs">
                   <div className="font-bold">{item.date}</div>
-                  <div className="text-[10px] text-muted">
-                    {item.timeSlot}
-                  </div>
+                  <div className="text-[10px] text-muted">{item.timeSlot}</div>
                 </div>
               ),
             },

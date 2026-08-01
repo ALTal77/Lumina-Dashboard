@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useData } from "../../context/DataContext";
-import { Patient } from "../../types"; 
+import { Patient } from "../../types";
 
 export const ManagePatients: React.FC = () => {
   const { t } = useTranslation() as {
@@ -9,7 +9,7 @@ export const ManagePatients: React.FC = () => {
   };
   const { patients, togglePatientSuspension } = useData();
 
-  // Cast patients to Patient[] so TS recognizes isSuspended and bloodGroup
+  // Cast patients to Patient[] so TS recognizes the bloodGroup field
   const patientList = patients as unknown as Patient[];
 
   return (
@@ -43,9 +43,6 @@ export const ManagePatients: React.FC = () => {
                   {t("managePatients.tableHeader.phone")}
                 </th>
                 <th className="p-3 rtl:text-right">
-                  {t("managePatients.tableHeader.bloodGroup")}
-                </th>
-                <th className="p-3 rtl:text-right">
                   {t("managePatients.tableHeader.status")}
                 </th>
                 <th className="p-3 text-right rtl:text-left">
@@ -55,10 +52,7 @@ export const ManagePatients: React.FC = () => {
             </thead>
             <tbody className="divide-y divide-border">
               {patientList.map((p) => (
-                <tr
-                  key={p.id}
-                  className="hover:bg-neutral-bg/50"
-                >
+                <tr key={p.id} className="hover:bg-neutral-bg/50">
                   <td className="p-3">
                     <div className="flex items-center gap-3">
                       <img
@@ -67,9 +61,7 @@ export const ManagePatients: React.FC = () => {
                         className="w-8 h-8 rounded-full object-cover"
                       />
                       <div>
-                        <div className="font-bold text-heading">
-                          {p.name}
-                        </div>
+                        <div className="font-bold text-heading">{p.name}</div>
                         <div className="text-[10px] text-muted">
                           {t("managePatients.idLabel", { id: p.id })}
                         </div>
@@ -78,18 +70,15 @@ export const ManagePatients: React.FC = () => {
                   </td>
                   <td className="p-3 font-mono">{p.email}</td>
                   <td className="p-3">{p.phone}</td>
-                  <td className="p-3 font-bold text-primary">
-                    {p.bloodGroup || "N/A"}
-                  </td>
                   <td className="p-3">
                     <span
                       className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
-                        p.isSuspended
+                        p.status === "suspended"
                           ? "bg-danger-bg text-danger"
                           : "bg-success-bg text-success"
                       }`}
                     >
-                      {p.isSuspended
+                      {p.status === "suspended"
                         ? t("managePatients.status.suspended")
                         : t("managePatients.status.active")}
                     </span>
@@ -98,12 +87,12 @@ export const ManagePatients: React.FC = () => {
                     <button
                       onClick={() => togglePatientSuspension(p.id)}
                       className={`px-3 py-1 rounded text-xs font-bold transition-colors ${
-                        p.isSuspended
+                        p.status === "suspended"
                           ? "bg-success text-white hover:brightness-90"
                           : "bg-danger-bg text-danger hover:bg-danger-bg border border-danger-bg"
                       }`}
                     >
-                      {p.isSuspended
+                      {p.status === "suspended"
                         ? t("managePatients.button.reactivate")
                         : t("managePatients.button.suspend")}
                     </button>

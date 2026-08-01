@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import i18n from '../i18n/i18n';
 import { UserRole, User } from '../types';
-import { mockPatients, mockDoctors } from '../data/mockData';
+import { mockPatients } from '../data/mockData';
 
 interface AuthContextType {
   role: UserRole;
@@ -36,13 +36,47 @@ const defaultDoctorUser: User = {
 
 const defaultPatientUser: User = mockPatients[0]; // Sarah Jenkins
 
+// Session persistence: keeps the active role/user/direction across page refreshes.
+const SESSION_STORAGE_KEY = 'lumina-auth-session';
+
+const defaultUserForRole = (role: UserRole): User => {
+  if (role === 'doctor') return defaultDoctorUser;
+  if (role === 'admin') return defaultAdminUser;
+  return defaultPatientUser;
+};
+
+const readStoredSession = (): { role: UserRole; user: User; dir: 'ltr' | 'rtl' } | null => {
+  try {
+    const raw = localStorage.getItem(SESSION_STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as { role?: UserRole; user?: User; dir?: 'ltr' | 'rtl' };
+    if (
+      !parsed.role ||
+      !['patient', 'doctor', 'admin'].includes(parsed.role) ||
+      !parsed.user?.id ||
+      parsed.user.role !== parsed.role
+    ) {
+      return null;
+    }
+    return {
+      role: parsed.role,
+      user: parsed.user,
+      dir: parsed.dir === 'rtl' ? 'rtl' : 'ltr',
+    };
+  } catch {
+    return null;
+  }
+};
+
+const storedSession = readStoredSession();
+
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [role, setRole] = useState<UserRole>('patient');
-  const [user, setUser] = useState<User>(defaultPatientUser);
+  const [role, setRole] = useState<UserRole>(storedSession?.role ?? 'patient');
+  const [user, setUser] = useState<User>(storedSession?.user ?? defaultUserForRole(role));
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(true);
-  const [dir, setDirState] = useState<'ltr' | 'rtl'>('ltr');
+  const [dir, setDirState] = useState<'ltr' | 'rtl'>(storedSession?.dir ?? 'ltr');
 
   useEffect(() => {
     document.documentElement.dir = dir;
@@ -50,22 +84,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     document.documentElement.lang = dir === 'rtl' ? 'ar' : 'en';
   }, [dir]);
 
+  // Keep the session in sync with state so a refresh restores the same role/user/direction.
+  useEffect(() => {
+    try {
+      localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify({ role, user, dir }));
+    } catch {
+      // Storage unavailable (private mode / quota) - session simply won't persist.
+    }
+  }, [role, user, dir]);
+
   const loginAs = (newRole: UserRole, customUser?: User) => {
     // TODO: connect to Express API for real JWT token validation (POST /api/auth/login)
     setRole(newRole);
     setIsAuthenticated(true);
-    if (customUser) {
-      setUser(customUser);
-    } else {
-      if (newRole === 'patient') setUser(defaultPatientUser);
-      else if (newRole === 'doctor') setUser(defaultDoctorUser);
-      else if (newRole === 'admin') setUser(defaultAdminUser);
-    }
+    setUser(customUser ?? defaultUserForRole(newRole));
   };
 
   const logout = () => {
     // TODO: connect to Express API (POST /api/auth/logout)
     setIsAuthenticated(false);
+    localStorage.removeItem(SESSION_STORAGE_KEY);
   };
 
   const toggleRTL = () => {

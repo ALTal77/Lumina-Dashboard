@@ -28,6 +28,9 @@
   --color-accent-doctor: #2563EB;
   --color-accent-admin: #4338CA;
 
+  /* Elevation */
+  --shadow-premium: 0 8px 30px -6px rgba(15, 23, 42, 0.12);
+
   --font-poppins: "Poppins", system-ui, sans-serif;
   --font-tajawal: "Tajawal", "Cairo", sans-serif;
 }
@@ -53,8 +56,15 @@ body {
   font-family: "Tajawal", "Cairo", sans-serif;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-weight: 700;
-  letter-spacing: -0.025em;
-  color: #0F172A;
+@layer base {
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    color: #0F172A;
+  }
+
+  /* Enabled buttons should always show a pointer cursor for better UX. */
+  button:not(:disabled) {
+    cursor: pointer;
+  }
 }
