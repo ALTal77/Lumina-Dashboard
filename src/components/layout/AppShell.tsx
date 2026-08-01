@@ -93,7 +93,7 @@ export const AppShell: React.FC = () => {
           }}
         >
           <div className="flex items-center gap-4 min-w-0">
-            <h1 className="text-base font-black text-white truncate tracking-tight">
+            <h1 className="font-semibold text-white truncate tracking-tight">
               {getPageTitle()}
             </h1>
           </div>

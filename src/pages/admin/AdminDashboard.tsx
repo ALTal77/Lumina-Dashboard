@@ -43,10 +43,8 @@ export const AdminDashboard: React.FC = () => {
 
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <span className="px-2.5 py-0.5 rounded-full bg-white/15 text-white border border-white/30 text-[10px] font-bold uppercase tracking-wider inline-block mb-2 backdrop-blur-sm">
-              {t("adminDashboard.badge")}
-            </span>
-            <h1 className="text-2xl font-black tracking-tight text-white">
+         
+            <h1 className="text-2xl font-semibold tracking-tight text-white">
               {t("adminDashboard.title")}
             </h1>
             <p className="text-white/80 text-xs mt-1">
