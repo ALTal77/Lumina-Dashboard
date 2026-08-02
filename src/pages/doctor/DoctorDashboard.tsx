@@ -6,18 +6,17 @@ import { useAuth } from "../../context/AuthContext";
 import { useData } from "../../context/DataContext";
 import { StatCard } from "../../components/shared/StatCard";
 import { StatusPill } from "../../components/shared/StatusPill";
-import { Doctor } from "../../types";
 
 export const DoctorDashboard: React.FC = () => {
   const { user } = useAuth();
-  const { appointments, approveAppointment, completeAppointment } = useData();
+  const { doctors, appointments, approveAppointment, completeAppointment } = useData();
   const { t } = useTranslation() as {
     t: (key: string, options?: any) => string;
   };
   const navigate = useNavigate();
 
   const doctorSpecialty =
-    (user as unknown as Doctor).specialty || "General Practitioner";
+    doctors.find((d) => d.id === user.id)?.specialty ?? "";
 
   const myAppointments = appointments.filter((a) => a.doctorId === user.id);
   const pendingRequests = myAppointments.filter((a) => a.status === "pending");
@@ -34,13 +33,23 @@ export const DoctorDashboard: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Welcome Banner */}
-      <div className="bg-surface text-heading rounded-2xl p-6 shadow-md border border-border">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="relative overflow-hidden bg-gradient-to-br from-primary to-primary-hover text-white rounded-2xl p-6 shadow-lg border border-border">
+        {/* Decorative blobs */}
+        <div
+          className="absolute -top-24 -right-16 rtl:-left-16 rtl:-right-auto w-72 h-72 rounded-full pointer-events-none"
+          style={{ background: "rgba(255,255,255,0.14)", filter: "blur(90px)" }}
+        />
+        <div
+          className="absolute -bottom-28 -left-10 rtl:-right-10 rtl:-left-auto w-64 h-64 rounded-full pointer-events-none"
+          style={{ background: "rgba(255,255,255,0.08)", filter: "blur(90px)" }}
+        />
+
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-black tracking-tight text-heading">
+            <h1 className="text-2xl font-semibold tracking-tight text-white">
               {t("doctorDashboard.title", { name: user.name })}
             </h1>
-            <p className="text-muted text-xs mt-1" dir="auto">
+            <p className="text-white/80 text-xs mt-1">
               {t("doctorDashboard.subtitle", {
                 specialty: doctorSpecialty,
                 count: pendingRequests.length,
@@ -48,13 +57,22 @@ export const DoctorDashboard: React.FC = () => {
             </p>
           </div>
 
-          <button
-            onClick={() => navigate("/doctor/schedule")}
-            className="px-4 py-2 bg-primary hover:bg-primary-hover text-white text-xs font-bold rounded-xl transition-colors shadow-md flex items-center justify-center gap-2 flex-shrink-0"
-          >
-            <Clock className="w-4 h-4" />
-            <span>{t("doctorDashboard.button.manageSchedule")}</span>
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => navigate("/doctor/appointments")}
+              className="px-3.5 py-2 bg-white text-primary hover:bg-primary-tint text-xs font-bold rounded-xl transition-all shadow-md flex items-center gap-1.5 hover:-translate-y-0.5"
+            >
+              <CalendarCheck className="w-4 h-4" />{" "}
+              {t("doctorDashboard.button.viewAppointments")}
+            </button>
+            <button
+              onClick={() => navigate("/doctor/schedule")}
+              className="px-3.5 py-2 bg-white/15 hover:bg-white/25 text-white text-xs font-bold rounded-xl border border-white/30 backdrop-blur-sm transition-all flex items-center gap-1.5 hover:-translate-y-0.5"
+            >
+              <Clock className="w-4 h-4" />{" "}
+              {t("doctorDashboard.button.manageSchedule")}
+            </button>
+          </div>
         </div>
       </div>
 

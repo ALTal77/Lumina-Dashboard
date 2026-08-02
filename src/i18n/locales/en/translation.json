@@ -210,7 +210,8 @@
     "welcome": "Welcome back, {{name}}!",
     "subtitle": "Manage your upcoming hospital consultations, book top specialists across departments, and review your medical records.",
     "button": {
-      "bookNew": "Book New Appointment"
+      "bookNew": "Book New Appointment",
+      "browseDepartments": "Browse Departments"
     },
     "statCard": {
       "totalAppointments": "Total Appointments",
@@ -441,9 +442,6 @@
     "badge": "Clinical Portal",
     "title": "{{name}}",
     "subtitle": "{{specialty}} • You have {{count}} pending requests awaiting approval today.",
-    "button": {
-      "manageSchedule": "Manage Weekly Schedule"
-    },
     "statCard": {
       "pendingRequests": "Pending Requests",
       "pendingRequestsSubtitle": "Action required",
@@ -459,6 +457,7 @@
       "approve": "Approve",
       "review": "Review",
       "markCompleted": "Mark Completed",
+      "viewAppointments": "View Appointments",
       "manageSchedule": "Manage Schedule"
     },
     "upcomingVisits": {

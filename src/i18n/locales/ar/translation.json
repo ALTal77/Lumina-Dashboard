@@ -210,7 +210,8 @@
     "welcome": "مرحباً بعودتك، {{name}}!",
     "subtitle": "إدارة استشاراتك القادمة، احجز مع كبار الأطباء عبر الأقسام، وراجع سجلاتك الطبية.",
     "button": {
-      "bookNew": "حجز موعد جديد"
+      "bookNew": "حجز موعد جديد",
+      "browseDepartments": "تصفح الأقسام"
     },
     "statCard": {
       "totalAppointments": "إجمالي المواعيد",
@@ -441,9 +442,6 @@
     "badge": "البوابة السريرية",
     "title": "د. {{name}}",
     "subtitle": "{{specialty}} • لديك {{count}} طلب قيد الانتظار اليوم.",
-    "button": {
-      "manageSchedule": "إدارة الجدول الأسبوعي"
-    },
     "statCard": {
       "pendingRequests": "الطلبات المعلقة",
       "pendingRequestsSubtitle": "بحاجة إلى إجراء",
@@ -459,6 +457,7 @@
       "approve": "موافقة",
       "review": "مراجعة",
       "markCompleted": "تحديد كمكتمل",
+      "viewAppointments": "عرض المواعيد",
       "manageSchedule": "إدارة الجدول"
     },
     "upcomingVisits": {

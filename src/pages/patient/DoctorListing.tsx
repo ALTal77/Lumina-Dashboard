@@ -1,12 +1,20 @@
-import React, { useState } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import { Search, Filter, Stethoscope, Star, Globe, Clock, ChevronRight } from 'lucide-react';
-import { useData } from '../../context/DataContext';
-import { Doctor } from '../../types';
-import { StarRating } from '../../components/shared/StarRating';
-import { Modal } from '../../components/shared/Modal';
-import { DoctorProfile } from './DoctorProfile';
+import React, { useState } from "react";
+import { useSearchParams, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import {
+  Search,
+  Filter,
+  Stethoscope,
+  Star,
+  Globe,
+  Clock,
+  ChevronRight,
+} from "lucide-react";
+import { useData } from "../../context/DataContext";
+import { Doctor } from "../../types";
+import { StarRating } from "../../components/shared/StarRating";
+import { Modal } from "../../components/shared/Modal";
+import { DoctorProfile } from "./DoctorProfile";
 
 export const DoctorListing: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -14,19 +22,22 @@ export const DoctorListing: React.FC = () => {
   const { t } = useTranslation();
   const { doctors, departments } = useData();
 
-  const deptFilterParam = searchParams.get('dept') || 'all';
-  const docFilterParam = searchParams.get('doc');
+  const deptFilterParam = searchParams.get("dept") || "all";
+  const docFilterParam = searchParams.get("doc");
 
   const [selectedDept, setSelectedDept] = useState<string>(deptFilterParam);
-  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const [minRating, setMinRating] = useState<number>(0);
 
   const [viewingDoctor, setViewingDoctor] = useState<Doctor | null>(
-    docFilterParam ? doctors.find((d) => d.id === docFilterParam) || null : null
+    docFilterParam
+      ? doctors.find((d) => d.id === docFilterParam) || null
+      : null,
   );
 
   const filteredDoctors = doctors.filter((doc) => {
-    if (selectedDept !== 'all' && doc.departmentId !== selectedDept) return false;
+    if (selectedDept !== "all" && doc.departmentId !== selectedDept)
+      return false;
     if (minRating > 0 && doc.rating < minRating) return false;
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
@@ -46,14 +57,17 @@ export const DoctorListing: React.FC = () => {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <h1 className="text-xl font-black text-heading tracking-tight">
-              {t('doctorListing.title')}
+              {t("doctorListing.title")}
             </h1>
             <p className="text-xs text-muted mt-1">
-              {t('doctorListing.subtitle')}
+              {t("doctorListing.subtitle")}
             </p>
           </div>
           <span className="text-xs font-bold text-muted">
-            {t('doctorListing.showingCount', { filtered: filteredDoctors.length, total: doctors.length })}
+            {t("doctorListing.showingCount", {
+              filtered: filteredDoctors.length,
+              total: doctors.length,
+            })}
           </span>
         </div>
 
@@ -66,7 +80,7 @@ export const DoctorListing: React.FC = () => {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={t('doctorListing.searchPlaceholder')}
+              placeholder={t("doctorListing.searchPlaceholder")}
               className="w-full pl-9 pr-3 rtl:pr-9 rtl:pl-3 py-2 text-xs bg-neutral-bg border border-border rounded-xl text-heading placeholder-muted focus:outline-none focus:border-primary"
             />
           </div>
@@ -77,24 +91,14 @@ export const DoctorListing: React.FC = () => {
             onChange={(e) => setSelectedDept(e.target.value)}
             className="w-full px-3 py-2 text-xs bg-neutral-bg border border-border rounded-xl text-heading focus:outline-none focus:border-primary font-medium"
           >
-            <option value="all">{t('doctorListing.filter.allDepartments')}</option>
+            <option value="all">
+              {t("doctorListing.filter.allDepartments")}
+            </option>
             {departments.map((d) => (
               <option key={d.id} value={d.id}>
                 {d.name}
               </option>
             ))}
-          </select>
-
-          {/* Rating filter dropdown */}
-          <select
-            value={minRating}
-            onChange={(e) => setMinRating(Number(e.target.value))}
-            className="w-full px-3 py-2 text-xs bg-neutral-bg border border-border rounded-xl text-heading focus:outline-none focus:border-primary font-medium"
-          >
-            <option value={0}>{t('doctorListing.filter.allRatings')}</option>
-            <option value={4.8}>{t('doctorListing.filter.topRated')}</option>
-            <option value={4.5}>{t('doctorListing.filter.fourFiveStars')}</option>
-            <option value={4.0}>{t('doctorListing.filter.fourStars')}</option>
           </select>
         </div>
       </div>
@@ -117,27 +121,47 @@ export const DoctorListing: React.FC = () => {
                   <span className="text-[10px] font-bold uppercase tracking-wider text-primary bg-primary-tint px-2 py-0.5 rounded border border-primary-tint inline-block mb-1">
                     {doc.departmentName}
                   </span>
-                  <h3 className="text-sm font-bold text-heading truncate" dir="auto">{doc.name}</h3>
-                  <p className="text-xs text-muted truncate" dir="auto">{doc.specialty}</p>
+                  <h3
+                    className="text-sm font-bold text-heading truncate"
+                    dir="auto"
+                  >
+                    {doc.name}
+                  </h3>
+                  <p className="text-xs text-muted truncate" dir="auto">
+                    {doc.specialty}
+                  </p>
                   <div className="mt-1">
-                    <StarRating rating={doc.rating} reviewCount={doc.reviewCount} size="sm" />
+                    <StarRating
+                      rating={doc.rating}
+                      reviewCount={doc.reviewCount}
+                      size="sm"
+                    />
                   </div>
                 </div>
               </div>
 
-              <p className="text-xs text-heading line-clamp-2 mb-4 leading-relaxed" dir="auto">
+              <p
+                className="text-xs text-heading line-clamp-2 mb-4 leading-relaxed"
+                dir="auto"
+              >
                 {doc.bio}
               </p>
 
               <div className="grid grid-cols-2 gap-2 text-[11px] bg-neutral-bg p-2.5 rounded-xl border border-border mb-4">
                 <div>
-                  <span className="text-muted font-semibold block text-[9px] uppercase">{t('doctorListing.card.experience')}</span>
-                  <span className="font-bold text-heading">{doc.yearsExperience} {t('doctorListing.card.years')}</span>
+                  <span className="text-muted font-semibold block text-[9px] uppercase">
+                    {t("doctorListing.card.experience")}
+                  </span>
+                  <span className="font-bold text-heading">
+                    {doc.yearsExperience} {t("doctorListing.card.years")}
+                  </span>
                 </div>
                 <div>
-                  <span className="text-muted font-semibold block text-[9px] uppercase">{t('doctorListing.card.languages')}</span>
+                  <span className="text-muted font-semibold block text-[9px] uppercase">
+                    {t("doctorListing.card.languages")}
+                  </span>
                   <span className="font-bold text-heading truncate block">
-                    {doc.languages.join(', ')}
+                    {doc.languages.join(", ")}
                   </span>
                 </div>
               </div>
@@ -145,8 +169,12 @@ export const DoctorListing: React.FC = () => {
 
             <div className="pt-3 border-t border-border flex items-center justify-between">
               <div>
-                <span className="text-[10px] text-muted font-semibold block uppercase">{t('doctorListing.card.consultation')}</span>
-                <span className="text-sm font-black text-heading">${doc.consultationFee}</span>
+                <span className="text-[10px] text-muted font-semibold block uppercase">
+                  {t("doctorListing.card.consultation")}
+                </span>
+                <span className="text-sm font-black text-heading">
+                  ${doc.consultationFee}
+                </span>
               </div>
 
               <div className="flex items-center gap-2">
@@ -154,13 +182,13 @@ export const DoctorListing: React.FC = () => {
                   onClick={() => setViewingDoctor(doc)}
                   className="px-3 py-1.5 bg-neutral-bg hover:bg-border text-heading text-xs font-bold rounded-lg transition-colors"
                 >
-                  {t('doctorListing.button.bioProfile')}
+                  {t("doctorListing.button.bioProfile")}
                 </button>
                 <button
                   onClick={() => navigate(`/patient/book?doctor=${doc.id}`)}
                   className="px-3 py-1.5 bg-primary hover:bg-primary-hover text-white text-xs font-bold rounded-lg transition-colors shadow-xs"
                 >
-                  {t('doctorListing.button.bookSlot')}
+                  {t("doctorListing.button.bookSlot")}
                 </button>
               </div>
             </div>
@@ -174,10 +202,16 @@ export const DoctorListing: React.FC = () => {
           isOpen={!!viewingDoctor}
           onClose={() => setViewingDoctor(null)}
           title={viewingDoctor.name}
-          subtitle={t('doctorListing.modal.subtitle', { specialty: viewingDoctor.specialty, department: viewingDoctor.departmentName })}
+          subtitle={t("doctorListing.modal.subtitle", {
+            specialty: viewingDoctor.specialty,
+            department: viewingDoctor.departmentName,
+          })}
           maxWidth="lg"
         >
-          <DoctorProfile doctor={viewingDoctor} onClose={() => setViewingDoctor(null)} />
+          <DoctorProfile
+            doctor={viewingDoctor}
+            onClose={() => setViewingDoctor(null)}
+          />
         </Modal>
       )}
     </div>
