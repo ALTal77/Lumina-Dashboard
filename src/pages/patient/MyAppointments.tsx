@@ -7,6 +7,7 @@ import { Appointment } from '../../types';
 import { StatusPill } from '../../components/shared/StatusPill';
 import { Modal } from '../../components/shared/Modal';
 import { StarRating } from '../../components/shared/StarRating';
+import { AppImage } from '../../components/shared/AppImage';
 
 export const MyAppointments: React.FC = () => {
   const { t } = useTranslation();
@@ -83,7 +84,7 @@ export const MyAppointments: React.FC = () => {
                 className="bg-surface rounded-2xl border border-border shadow-xs p-5 flex flex-col md:flex-row md:items-center justify-between gap-4"
               >
                 <div className="flex items-start gap-4">
-                  <img
+                  <AppImage
                     src={apt.doctorAvatar || 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=150'}
                     alt={apt.doctorName}
                     className="w-14 h-14 rounded-2xl object-cover border border-border flex-shrink-0"

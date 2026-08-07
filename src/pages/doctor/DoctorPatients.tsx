@@ -4,6 +4,7 @@ import { Plus } from "lucide-react";
 import { useData } from "../../context/DataContext";
 import { useAuth } from "../../context/AuthContext";
 import { Modal } from "../../components/shared/Modal";
+import { AppImage } from "../../components/shared/AppImage";
 import { Doctor, Patient } from "../../types";
 
 export const DoctorPatients: React.FC = () => {
@@ -90,7 +91,7 @@ export const DoctorPatients: React.FC = () => {
                     : "bg-page border-border text-muted"
                 }`}
               >
-                <img
+                <AppImage
                   src={p.avatar}
                   alt={p.name}
                   className="w-8 h-8 rounded-full object-cover"

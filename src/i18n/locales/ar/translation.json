@@ -54,6 +54,7 @@
       "dashboard": "نظرة عامة على بوابة المريض",
       "departments": "الأقسام الطبية",
       "doctors": "البحث عن أطباء وحجز المواعيد",
+      "book": "حجز موعد",
       "appointments": "مواعيدي وسجلي",
       "messages": "بريد المريض والاستشارات",
       "profile": "الملف الشخصي والإعدادات"
@@ -292,6 +293,7 @@
     }
   },
   "bookAppointmentFlow": {
+    "feeDisplay": "${{fee}}",
     "step1": {
       "label": "الموعد",
       "title": "الخطوة 1: اختر الطبيب والموعد",
@@ -332,8 +334,11 @@
       "methodApplePay": "أبل باي",
       "methodDigitalWallet": "محفظة رقمية",
       "cardNumber": "رقم البطاقة",
+      "cardNumberPlaceholder": "1234 5678 9012 3456",
       "expiryDate": "تاريخ الانتهاء",
+      "expiryDatePlaceholder": "MM/YY",
       "cvc": "CVC / CVV",
+      "cvcPlaceholder": "123",
       "backButton": "رجوع",
       "processing": "جاري معالجة الدفع...",
       "payButton": "ادفع ${{fee}}.00 دولار"

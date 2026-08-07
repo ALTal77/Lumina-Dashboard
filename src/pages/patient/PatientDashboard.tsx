@@ -16,6 +16,7 @@ import { useAuth } from "../../context/AuthContext";
 import { useData } from "../../context/DataContext";
 import { StatCard } from "../../components/shared/StatCard";
 import { StatusPill } from "../../components/shared/StatusPill";
+import { AppImage } from "../../components/shared/AppImage";
 
 export const PatientDashboard: React.FC = () => {
   const { user } = useAuth();
@@ -145,7 +146,7 @@ export const PatientDashboard: React.FC = () => {
               <div className="py-4 space-y-4">
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex items-center gap-3">
-                    <img
+                    <AppImage
                       src={
                         upcomingAppointment.doctorAvatar ||
                         "https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=150"
@@ -313,7 +314,7 @@ export const PatientDashboard: React.FC = () => {
               className="bg-neutral-bg border border-border rounded-xl p-4 flex flex-col justify-between hover:border-primary transition-colors"
             >
               <div>
-                <img
+                <AppImage
                   src={doc.profilePicture}
                   alt={doc.name}
                   className="w-16 h-16 rounded-xl object-cover mb-3 border border-border"
@@ -340,7 +341,7 @@ export const PatientDashboard: React.FC = () => {
                   ${doc.consultationFee}
                 </span>
                 <button
-                  onClick={() => navigate(`/patient/doctors?doc=${doc.id}`)}
+                  onClick={() => navigate(`/patient/book?doctor=${doc.id}`)}
                   className="px-2.5 py-1 bg-primary hover:bg-primary-hover text-white text-[10px] font-bold rounded-md transition-colors"
                 >
                   {t("patientDashboard.featured.bookSlot")}

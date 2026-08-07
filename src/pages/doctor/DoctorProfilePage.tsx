@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Save, CheckCircle } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { FileUploadMock } from "../../components/shared/FileUploadMock";
+import { AppImage } from "../../components/shared/AppImage";
 import { Doctor } from "../../types";
 
 export const DoctorProfilePage: React.FC = () => {
@@ -33,7 +34,7 @@ export const DoctorProfilePage: React.FC = () => {
   return (
     <div className="max-w-3xl mx-auto space-y-6">
       <div className="bg-surface p-5 rounded-2xl border border-border shadow-xs flex items-center gap-4">
-        <img
+        <AppImage
           src={user.avatar}
           alt={user.name}
           className="w-16 h-16 rounded-2xl object-cover border-2 border-primary shadow-sm"

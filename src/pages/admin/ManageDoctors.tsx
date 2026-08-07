@@ -6,6 +6,7 @@ import { Doctor } from "../../types";
 import { Modal } from "../../components/shared/Modal";
 import { StarRating } from "../../components/shared/StarRating";
 import { FileUploadMock } from "../../components/shared/FileUploadMock";
+import { AppImage } from "../../components/shared/AppImage";
 
 export const ManageDoctors: React.FC = () => {
   const { t } = useTranslation() as {
@@ -147,7 +148,7 @@ export const ManageDoctors: React.FC = () => {
                   <td className="p-3">
                     <div className="flex items-center gap-3">
                       {doc.profilePicture ? (
-                        <img
+                        <AppImage
                           src={doc.profilePicture}
                           alt={doc.name}
                           className="w-9 h-9 rounded-xl object-cover border border-border"

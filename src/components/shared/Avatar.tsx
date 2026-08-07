@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { AppImage } from './AppImage';
 
 interface AvatarProps {
   src?: string;
@@ -43,7 +44,7 @@ export const Avatar: React.FC<AvatarProps> = ({
   return (
     <div className="relative inline-block flex-shrink-0">
       {src ? (
-        <img
+        <AppImage
           src={src}
           alt={name}
           className={`${sizeClasses} rounded-full object-cover border border-border shadow-2xs ${className}`}

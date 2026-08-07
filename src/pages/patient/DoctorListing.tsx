@@ -14,6 +14,7 @@ import { useData } from "../../context/DataContext";
 import { Doctor } from "../../types";
 import { StarRating } from "../../components/shared/StarRating";
 import { Modal } from "../../components/shared/Modal";
+import { AppImage } from "../../components/shared/AppImage";
 import { DoctorProfile } from "./DoctorProfile";
 
 export const DoctorListing: React.FC = () => {
@@ -112,7 +113,7 @@ export const DoctorListing: React.FC = () => {
           >
             <div>
               <div className="flex items-start gap-3 mb-3">
-                <img
+                <AppImage
                   src={doc.profilePicture}
                   alt={doc.name}
                   className="w-16 h-16 rounded-2xl object-cover border border-border flex-shrink-0"
@@ -153,7 +154,7 @@ export const DoctorListing: React.FC = () => {
                     {t("doctorListing.card.experience")}
                   </span>
                   <span className="font-bold text-heading">
-                    {doc.yearsExperience} {t("doctorListing.card.years")}
+                    {t("doctorListing.card.experienceYears", { years: doc.yearsExperience })}
                   </span>
                 </div>
                 <div>

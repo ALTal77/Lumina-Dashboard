@@ -2,6 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { useData } from "../../context/DataContext";
 import { Patient } from "../../types";
+import { AppImage } from "../../components/shared/AppImage";
 
 export const ManagePatients: React.FC = () => {
   const { t } = useTranslation() as {
@@ -55,7 +56,7 @@ export const ManagePatients: React.FC = () => {
                 <tr key={p.id} className="hover:bg-neutral-bg/50">
                   <td className="p-3">
                     <div className="flex items-center gap-3">
-                      <img
+                      <AppImage
                         src={p.avatar}
                         alt={p.name}
                         className="w-8 h-8 rounded-full object-cover"

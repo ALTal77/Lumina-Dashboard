@@ -16,6 +16,7 @@ import {
 import { useData } from '../../context/DataContext';
 import { useAuth } from '../../context/AuthContext';
 import { TimeSlotPicker } from '../../components/shared/TimeSlotPicker';
+import { AppImage } from '../../components/shared/AppImage';
 import { TimeSlot } from '../../types';
 
 export const BookAppointmentFlow: React.FC = () => {
@@ -41,9 +42,9 @@ export const BookAppointmentFlow: React.FC = () => {
 
   // Payment state
   const [paymentMethod, setPaymentMethod] = useState<'Credit Card' | 'Debit Card' | 'Apple Pay' | 'Digital Wallet'>('Credit Card');
-  const [cardNumber, setCardNumber] = useState<string>('4532 •••• •••• 8829');
-  const [cardExpiry, setCardExpiry] = useState<string>('08/28');
-  const [cardCvc, setCardCvc] = useState<string>('882');
+  const [cardNumber, setCardNumber] = useState<string>('');
+  const [cardExpiry, setCardExpiry] = useState<string>('');
+  const [cardCvc, setCardCvc] = useState<string>('');
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
 
   // Result state
@@ -152,7 +153,7 @@ export const BookAppointmentFlow: React.FC = () => {
       {step === 1 && (
         <div className="bg-surface rounded-2xl border border-border shadow-xs p-6 space-y-6">
           <div className="border-b border-border pb-3">
-            <h2 className="text-base font-bold text-heading">{t('bookAppointmentFlow.step1.heading')}</h2>
+            <h2 className="text-base font-bold text-heading">{t('bookAppointmentFlow.step1.title')}</h2>
             <p className="text-xs text-muted">{t('bookAppointmentFlow.step1.subtitle')}</p>
           </div>
 
@@ -160,7 +161,7 @@ export const BookAppointmentFlow: React.FC = () => {
             {/* Doctor Selection */}
             <div>
               <label className="block text-xs font-semibold text-heading mb-1.5">
-                {t('bookAppointmentFlow.step1.selectDoctor')}
+                {t('bookAppointmentFlow.step1.doctorLabel')}
               </label>
               <select
                 value={selectedDoctorId}
@@ -172,14 +173,18 @@ export const BookAppointmentFlow: React.FC = () => {
               >
                 {doctors.map((doc) => (
                   <option key={doc.id} value={doc.id}>
-                    {doc.name} ({doc.specialty} - ${doc.consultationFee})
+                    {t('bookAppointmentFlow.step1.doctorOptionFormat', {
+                      name: doc.name,
+                      specialty: doc.specialty,
+                      fee: doc.consultationFee,
+                    })}
                   </option>
                 ))}
               </select>
 
               {selectedDoctor && (
                 <div className="mt-4 p-4 bg-primary-tint/50 border border-primary-tint rounded-xl flex items-center gap-3">
-                  <img
+                  <AppImage
                     src={selectedDoctor.profilePicture}
                     alt={selectedDoctor.name}
                     className="w-14 h-14 rounded-xl object-cover border border-border"
@@ -187,7 +192,7 @@ export const BookAppointmentFlow: React.FC = () => {
                   <div>
                     <h4 className="text-xs font-bold text-heading" dir="auto">{selectedDoctor.name}</h4>
                     <p className="text-[11px] text-primary font-semibold" dir="auto">{selectedDoctor.specialty}</p>
-                    <p className="text-[10px] text-muted">{selectedDoctor.departmentName} • {t('bookAppointmentFlow.step1.feeLabel', { fee: selectedDoctor.consultationFee })}</p>
+                    <p className="text-[10px] text-muted">{selectedDoctor.departmentName} • {t('bookAppointmentFlow.feeDisplay', { fee: selectedDoctor.consultationFee })}</p>
                   </div>
                 </div>
               )}
@@ -196,7 +201,7 @@ export const BookAppointmentFlow: React.FC = () => {
             {/* Date Selection */}
             <div>
               <label className="block text-xs font-semibold text-heading mb-1.5">
-                {t('bookAppointmentFlow.step1.appointmentDate')}
+                {t('bookAppointmentFlow.step1.dateLabel')}
               </label>
               <input
                 type="date"
@@ -211,7 +216,7 @@ export const BookAppointmentFlow: React.FC = () => {
           {/* Time Slot Picker */}
           <div>
             <label className="block text-xs font-semibold text-heading mb-2">
-              {t('bookAppointmentFlow.step1.availableSlots', { date: selectedDate })}
+              {t('bookAppointmentFlow.step1.slotsLabel', { date: selectedDate })}
             </label>
             <TimeSlotPicker
               slots={availableSlots}
@@ -225,14 +230,14 @@ export const BookAppointmentFlow: React.FC = () => {
               onClick={() => navigate('/patient/doctors')}
               className="px-4 py-2 bg-neutral-bg text-heading text-xs font-bold rounded-xl"
             >
-              {t('bookAppointmentFlow.step1.cancel')}
+              {t('bookAppointmentFlow.step1.cancelButton')}
             </button>
             <button
               disabled={!selectedSlot}
               onClick={handleNextToSummary}
               className="px-5 py-2 bg-primary hover:bg-primary-hover disabled:opacity-50 text-white text-xs font-bold rounded-xl transition-colors shadow-xs"
             >
-              {t('bookAppointmentFlow.step1.continueToDetails')}
+              {t('bookAppointmentFlow.step1.continueButton')}
             </button>
           </div>
         </div>
@@ -242,7 +247,7 @@ export const BookAppointmentFlow: React.FC = () => {
       {step === 2 && selectedDoctor && selectedSlot && (
         <div className="bg-surface rounded-2xl border border-border shadow-xs p-6 space-y-6">
           <div className="border-b border-border pb-3">
-            <h2 className="text-base font-bold text-heading">{t('bookAppointmentFlow.step2.heading')}</h2>
+            <h2 className="text-base font-bold text-heading">{t('bookAppointmentFlow.step2.title')}</h2>
             <p className="text-xs text-muted">{t('bookAppointmentFlow.step2.subtitle')}</p>
           </div>
 
@@ -251,20 +256,20 @@ export const BookAppointmentFlow: React.FC = () => {
             <h4 className="text-xs font-bold text-heading uppercase tracking-wider">{t('bookAppointmentFlow.step2.bookingOverview')}</h4>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
               <div>
-                <span className="text-[10px] text-muted block uppercase">{t('bookAppointmentFlow.step2.doctor')}</span>
+                <span className="text-[10px] text-muted block uppercase">{t('bookAppointmentFlow.step2.overviewDoctor')}</span>
                 <span className="font-bold text-heading" dir="auto">{selectedDoctor.name}</span>
               </div>
               <div>
-                <span className="text-[10px] text-muted block uppercase">{t('bookAppointmentFlow.step2.date')}</span>
+                <span className="text-[10px] text-muted block uppercase">{t('bookAppointmentFlow.step2.overviewDate')}</span>
                 <span className="font-bold text-heading">{selectedDate}</span>
               </div>
               <div>
-                <span className="text-[10px] text-muted block uppercase">{t('bookAppointmentFlow.step2.timeSlot')}</span>
+                <span className="text-[10px] text-muted block uppercase">{t('bookAppointmentFlow.step2.overviewTimeSlot')}</span>
                 <span className="font-bold text-primary">{selectedSlot.startTime} - {selectedSlot.endTime}</span>
               </div>
               <div>
-                <span className="text-[10px] text-muted block uppercase">{t('bookAppointmentFlow.step2.consultationFee')}</span>
-                <span className="font-bold text-success">${selectedDoctor.consultationFee}</span>
+                <span className="text-[10px] text-muted block uppercase">{t('bookAppointmentFlow.step2.overviewFee')}</span>
+                <span className="font-bold text-success">{t('bookAppointmentFlow.feeDisplay', { fee: selectedDoctor.consultationFee })}</span>
               </div>
             </div>
           </div>
@@ -272,13 +277,13 @@ export const BookAppointmentFlow: React.FC = () => {
           {/* Notes Input */}
           <div>
             <label className="block text-xs font-semibold text-heading mb-1.5">
-              {t('bookAppointmentFlow.step2.symptomsLabel')}
+              {t('bookAppointmentFlow.step2.notesLabel')}
             </label>
             <textarea
               rows={4}
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder={t('bookAppointmentFlow.step2.symptomsPlaceholder')}
+              placeholder={t('bookAppointmentFlow.step2.notesPlaceholder')}
               className="w-full p-3 text-xs bg-neutral-bg border border-border rounded-xl text-heading placeholder-muted focus:outline-none focus:border-primary"
             />
           </div>
@@ -288,13 +293,13 @@ export const BookAppointmentFlow: React.FC = () => {
               onClick={() => setStep(1)}
               className="px-4 py-2 bg-neutral-bg text-heading text-xs font-bold rounded-xl"
             >
-              {t('bookAppointmentFlow.step2.back')}
+              {t('bookAppointmentFlow.step2.backButton')}
             </button>
             <button
               onClick={handleNextToPayment}
               className="px-5 py-2 bg-primary hover:bg-primary-hover text-white text-xs font-bold rounded-xl transition-colors shadow-xs"
             >
-              {t('bookAppointmentFlow.step2.proceedToPayment')}
+              {t('bookAppointmentFlow.step2.proceedButton')}
             </button>
           </div>
         </div>
@@ -305,7 +310,7 @@ export const BookAppointmentFlow: React.FC = () => {
         <div className="bg-surface rounded-2xl border border-border shadow-xs p-6 space-y-6">
           <div className="border-b border-border pb-3 flex items-center justify-between">
             <div>
-              <h2 className="text-base font-bold text-heading">{t('bookAppointmentFlow.step3.heading')}</h2>
+              <h2 className="text-base font-bold text-heading">{t('bookAppointmentFlow.step3.title')}</h2>
               <p className="text-xs text-muted">{t('bookAppointmentFlow.step3.subtitle')}</p>
             </div>
             <span className="px-2.5 py-0.5 rounded-full bg-success-bg text-success font-bold text-[10px] flex items-center gap-1 border border-success-bg">
@@ -317,18 +322,18 @@ export const BookAppointmentFlow: React.FC = () => {
           <div className="p-4 bg-primary text-white rounded-xl flex items-center justify-between">
             <div>
               <span className="text-[10px] uppercase text-primary-tint font-bold block">{t('bookAppointmentFlow.step3.totalAmount')}</span>
-              <span className="text-2xl font-black">${selectedDoctor.consultationFee}.00 USD</span>
+              <span className="text-2xl font-black">{t('bookAppointmentFlow.step3.amountDisplay', { fee: selectedDoctor.consultationFee })}</span>
             </div>
-            <div className="text-right rtl:text-left text-xs text-muted">
-              <p>{t('bookAppointmentFlow.step3.patientLabel')}: {user.name}</p>
-              <p>{t('bookAppointmentFlow.step3.doctorLabel')}: {selectedDoctor.name}</p>
+            <div className="text-right rtl:text-left text-xs text-white">
+              <p>{t('bookAppointmentFlow.step3.patientLabel', { name: user.name })}</p>
+              <p>{t('bookAppointmentFlow.step3.doctorLabel', { name: selectedDoctor.name })}</p>
             </div>
           </div>
 
           {/* Payment Method Selector */}
           <div>
             <label className="block text-xs font-semibold text-heading mb-2">
-              {t('bookAppointmentFlow.step3.selectPaymentMethod')}
+              {t('bookAppointmentFlow.step3.paymentMethodLabel')}
             </label>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               {(['Credit Card', 'Debit Card', 'Apple Pay', 'Digital Wallet'] as const).map((method) => (
@@ -357,9 +362,12 @@ export const BookAppointmentFlow: React.FC = () => {
               </label>
               <input
                 type="text"
+                name="mockCardNumber"
+                autoComplete="off"
                 value={cardNumber}
                 onChange={(e) => setCardNumber(e.target.value)}
-                className="w-full px-3 py-2 text-xs font-mono bg-surface border border-border rounded-lg text-heading"
+                placeholder={t('bookAppointmentFlow.step3.cardNumberPlaceholder')}
+                className="w-full px-3 py-2 text-xs font-mono bg-surface border border-border rounded-lg text-heading placeholder-muted"
               />
             </div>
 
@@ -370,9 +378,14 @@ export const BookAppointmentFlow: React.FC = () => {
               </label>
                 <input
                   type="text"
+                  name="mockCardExpiry"
+                  autoComplete="off"
+                  inputMode="numeric"
+                  maxLength={5}
                   value={cardExpiry}
                   onChange={(e) => setCardExpiry(e.target.value)}
-                  className="w-full px-3 py-2 text-xs font-mono bg-surface border border-border rounded-lg text-heading"
+                  placeholder={t('bookAppointmentFlow.step3.expiryDatePlaceholder')}
+                  className="w-full px-3 py-2 text-xs font-mono bg-surface border border-border rounded-lg text-heading placeholder-muted"
                 />
               </div>
               <div>
@@ -381,9 +394,14 @@ export const BookAppointmentFlow: React.FC = () => {
                 </label>
                 <input
                   type="password"
+                  name="mockCardCvc"
+                  autoComplete="new-password"
+                  inputMode="numeric"
+                  maxLength={3}
                   value={cardCvc}
                   onChange={(e) => setCardCvc(e.target.value)}
-                  className="w-full px-3 py-2 text-xs font-mono bg-surface border border-border rounded-lg text-heading"
+                  placeholder={t('bookAppointmentFlow.step3.cvcPlaceholder')}
+                  className="w-full px-3 py-2 text-xs font-mono bg-surface border border-border rounded-lg text-heading placeholder-muted"
                 />
               </div>
             </div>
@@ -395,7 +413,7 @@ export const BookAppointmentFlow: React.FC = () => {
               disabled={isProcessing}
               className="px-4 py-2 bg-neutral-bg text-heading text-xs font-bold rounded-xl"
             >
-              {t('bookAppointmentFlow.step3.back')}
+              {t('bookAppointmentFlow.step3.backButton')}
             </button>
             <button
               onClick={handleExecuteMockPayment}
@@ -410,7 +428,7 @@ export const BookAppointmentFlow: React.FC = () => {
               ) : (
                 <>
                   <CreditCard className="w-4 h-4" />
-                  <span>{t('bookAppointmentFlow.step3.pay', { fee: selectedDoctor.consultationFee })}</span>
+                  <span>{t('bookAppointmentFlow.step3.payButton', { fee: selectedDoctor.consultationFee })}</span>
                 </>
               )}
             </button>
@@ -427,11 +445,11 @@ export const BookAppointmentFlow: React.FC = () => {
 
           <div>
             <span className="text-[10px] font-black uppercase tracking-widest text-success bg-success-bg px-2.5 py-1 rounded-full border border-success-bg">
-              {t('bookAppointmentFlow.step4.bookingConfirmed')}
+              {t('bookAppointmentFlow.step4.badge')}
             </span>
-            <h2 className="text-2xl font-black text-heading mt-2">{t('bookAppointmentFlow.step4.appointmentReceived')}</h2>
+            <h2 className="text-2xl font-black text-heading mt-2">{t('bookAppointmentFlow.step4.title')}</h2>
             <p className="text-xs text-muted max-w-md mx-auto mt-1">
-              {t('bookAppointmentFlow.step4.confirmationText', { name: selectedDoctor.name })}
+              {t('bookAppointmentFlow.step4.message', { doctorName: selectedDoctor.name })}
             </p>
           </div>
 
@@ -446,7 +464,7 @@ export const BookAppointmentFlow: React.FC = () => {
                 <span className="text-xs font-mono font-bold text-heading">
                   {bookingResult.appointmentId}
                 </span>
-                <p className="text-[10px] text-success font-bold">{t('bookAppointmentFlow.step4.paidStatus')}</p>
+                <p className="text-[10px] text-success font-bold">{t('bookAppointmentFlow.step4.invoiceStatus')}</p>
               </div>
             </div>
 
@@ -470,8 +488,8 @@ export const BookAppointmentFlow: React.FC = () => {
             </div>
 
             <div className="border-t border-border pt-3 flex items-center justify-between text-xs font-bold">
-              <span>{t('bookAppointmentFlow.step4.paidVia', { method: paymentMethod })}</span>
-              <span className="text-base text-success">${selectedDoctor.consultationFee}.00</span>
+              <span>{t('bookAppointmentFlow.step4.invoicePaidVia', { method: t(`bookAppointmentFlow.step3.method${paymentMethod.replace(/\s+/g, '')}`) })}</span>
+              <span className="text-base text-success">{t('bookAppointmentFlow.step3.amountDisplay', { fee: selectedDoctor.consultationFee })}</span>
             </div>
           </div>
 
@@ -480,7 +498,7 @@ export const BookAppointmentFlow: React.FC = () => {
               onClick={() => window.print()}
               className="px-4 py-2 bg-neutral-bg text-heading text-xs font-bold rounded-xl hover:bg-border"
             >
-              {t('bookAppointmentFlow.step4.printInvoice')}
+              {t('bookAppointmentFlow.step4.printButton')}
             </button>
             <button
               onClick={() => navigate('/patient/appointments')}

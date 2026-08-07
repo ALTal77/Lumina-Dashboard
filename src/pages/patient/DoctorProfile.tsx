@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Stethoscope, Phone, Mail, Award, Globe, Star, CalendarCheck } from 'lucide-react';
 import { Doctor } from '../../types';
 import { StarRating } from '../../components/shared/StarRating';
+import { AppImage } from '../../components/shared/AppImage';
 import { useData } from '../../context/DataContext';
 
 interface DoctorProfileProps {
@@ -27,7 +28,7 @@ export const DoctorProfile: React.FC<DoctorProfileProps> = ({ doctor, onClose })
     <div className="space-y-6">
       {/* Header Info */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 bg-neutral-bg rounded-2xl border border-border">
-        <img
+        <AppImage
           src={doctor.profilePicture}
           alt={doctor.name}
           className="w-20 h-20 rounded-2xl object-cover border-2 border-surface shadow-md flex-shrink-0"

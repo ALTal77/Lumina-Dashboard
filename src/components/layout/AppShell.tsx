@@ -33,6 +33,7 @@ export const AppShell: React.FC = () => {
       return t("pageTitle.patient.departments");
     if (path.includes("/patient/doctors"))
       return t("pageTitle.patient.doctors");
+    if (path.includes("/patient/book")) return t("pageTitle.patient.book");
     if (path.includes("/patient/appointments"))
       return t("pageTitle.patient.appointments");
     if (path.includes("/patient/messages"))
@@ -64,7 +65,7 @@ export const AppShell: React.FC = () => {
     if (path.includes("/admin/reports")) return t("pageTitle.admin.reports");
     if (path.includes("/admin/settings")) return t("pageTitle.admin.settings");
 
-    return t("pageTitle.default");
+    return t("pageTitle.fallback");
   };
 
   return (
@@ -159,7 +160,8 @@ export const AppShell: React.FC = () => {
                               {n.title}
                             </span>
                             <span className="text-[9px] text-muted">
-                              {n.createdAt.split(" ")[1] || "Now"}
+                              {n.createdAt.replace("T", " ").split(" ")[1]?.slice(0, 5) ||
+                                t("navbar.notifications.now")}
                             </span>
                           </div>
                           <p className="text-[11px] text-muted leading-snug">

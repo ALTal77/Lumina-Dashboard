@@ -54,6 +54,7 @@
       "dashboard": "Patient Portal Overview",
       "departments": "Medical Departments",
       "doctors": "Find & Book Doctors",
+      "book": "Book Appointment",
       "appointments": "My Appointments & History",
       "messages": "Patient Inbox & Consultations",
       "profile": "Patient Profile & Settings"
@@ -292,6 +293,7 @@
     }
   },
   "bookAppointmentFlow": {
+    "feeDisplay": "${{fee}}",
     "step1": {
       "label": "Time Slot",
       "title": "Step 1: Select Doctor & Schedule",
@@ -332,8 +334,11 @@
       "methodApplePay": "Apple Pay",
       "methodDigitalWallet": "Digital Wallet",
       "cardNumber": "Card Number",
+      "cardNumberPlaceholder": "1234 5678 9012 3456",
       "expiryDate": "Expiry Date",
+      "expiryDatePlaceholder": "MM/YY",
       "cvc": "CVC / CVV",
+      "cvcPlaceholder": "123",
       "backButton": "Back",
       "processing": "Processing Payment...",
       "payButton": "Pay ${{fee}}.00 USD"
