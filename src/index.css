@@ -68,3 +68,45 @@ body {
     cursor: pointer;
   }
 }
+
+/* --- Print / Export scoping --- */
+@page {
+  size: A4;
+  margin: 12mm;
+}
+
+@media print {
+  html,
+  body {
+    height: auto;
+    overflow: visible;
+  }
+
+  /* Hide the entire app shell except the printable receipt. */
+  body * {
+    visibility: hidden;
+  }
+
+  .printable-only,
+  .printable-only * {
+    visibility: visible;
+  }
+
+  .printable-only {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: auto;
+    max-width: none;
+    margin: 0;
+    border-radius: 0;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .printable-only * {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+}

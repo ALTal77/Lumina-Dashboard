@@ -356,7 +356,9 @@
       "invoiceDate": "التاريخ المحدد",
       "invoiceTimeSlot": "الوقت",
       "invoicePaidVia": "مدفوع عبر {{method}}",
-      "printButton": "طباعة / حفظ الفاتورة الإلكترونية",
+      "printButton": "طباعة الفاتورة",
+      "saveButton": "حفظ الفاتورة الإلكترونية (PDF)",
+      "issuedAt": "أُصدرت في {{date}}",
       "goToAppointments": "الذهاب إلى مواعيدي"
     }
   },

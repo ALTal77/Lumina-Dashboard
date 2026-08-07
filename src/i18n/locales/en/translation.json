@@ -356,7 +356,9 @@
       "invoiceDate": "Scheduled Date",
       "invoiceTimeSlot": "Time Slot",
       "invoicePaidVia": "Paid via {{method}}",
-      "printButton": "Print / Save E-Invoice",
+      "printButton": "Print Invoice",
+      "saveButton": "Save E-Invoice (PDF)",
+      "issuedAt": "Issued {{date}}",
       "goToAppointments": "Go to My Appointments"
     }
   },
