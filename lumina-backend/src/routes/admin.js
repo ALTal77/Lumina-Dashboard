@@ -54,6 +54,26 @@ const DEFAULT_SLOTS = [
   ["02:30 PM", "03:00 PM"], ["04:00 PM", "04:30 PM"], ["06:00 PM", "06:30 PM"],
 ];
 
+const DAY_ABBR_TO_FULL = {
+  Mon: "Monday", Tue: "Tuesday", Wed: "Wednesday", Thu: "Thursday",
+  Fri: "Friday", Sat: "Saturday", Sun: "Sunday",
+};
+
+function normalizeDays(days) {
+  if (!Array.isArray(days)) return null;
+  const result = [];
+  for (const raw of days) {
+    const value = String(raw).trim();
+    const full = DAY_ABBR_TO_FULL[value] || value;
+    const fullName = Object.values(DAY_ABBR_TO_FULL).includes(full) ? full : null;
+    if (!fullName) return null;
+    if (!result.includes(fullName)) result.push(fullName);
+  }
+  return result.sort((a, b) =>
+    Object.values(DAY_ABBR_TO_FULL).indexOf(a) - Object.values(DAY_ABBR_TO_FULL).indexOf(b),
+  );
+}
+
 router.post(
   "/doctors",
   [
@@ -77,6 +97,11 @@ router.post(
       availableDays = ["Monday", "Wednesday", "Friday"],
       profilePicture = "https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&q=80&w=600",
     } = req.body;
+
+    const days = normalizeDays(availableDays);
+    if (!days) {
+      return res.status(400).json({ error: "availableDays must be valid day names (e.g. Monday..Sunday)" });
+    }
 
     if (db.prepare("SELECT id FROM users WHERE email = ?").get(email)) {
       return res.status(409).json({ error: "An account with this email already exists" });
@@ -104,7 +129,7 @@ router.post(
     );
 
     const insertSlot = db.prepare(`INSERT INTO time_slots (doctor_id, day, start_time, end_time, is_locked) VALUES (?, ?, ?, ?, 0)`);
-    for (const day of availableDays) {
+    for (const day of days) {
       for (const [start, end] of DEFAULT_SLOTS) insertSlot.run(doctorId, day, start, end);
     }
 
@@ -145,9 +170,13 @@ router.put("/doctors/:id", [param("id").isString().notEmpty()], validate, (req, 
   );
 
   if (Array.isArray(b.availableDays)) {
+    const days = normalizeDays(b.availableDays);
+    if (!days) {
+      return res.status(400).json({ error: "availableDays must be valid day names (e.g. Monday..Sunday)" });
+    }
     db.prepare("DELETE FROM time_slots WHERE doctor_id = ?").run(req.params.id);
     const insertSlot = db.prepare(`INSERT INTO time_slots (doctor_id, day, start_time, end_time, is_locked) VALUES (?, ?, ?, ?, 0)`);
-    for (const day of b.availableDays) {
+    for (const day of days) {
       for (const [start, end] of DEFAULT_SLOTS) insertSlot.run(req.params.id, day, start, end);
     }
   }

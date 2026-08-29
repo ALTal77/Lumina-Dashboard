@@ -385,14 +385,16 @@
       "reviewLabel": "مراجعتك وتعليقاتك",
       "placeholder": "كيف كانت رعاية الطبيب، وقت الانتظار، وتجربة العيادة؟",
       "cancel": "إلغاء",
-      "submitRating": "إرسال التقييم"
+      "submitRating": "إرسال التقييم",
+      "submitting": "جارٍ الإرسال..."
     },
     "rescheduleModal": {
       "title": "إعادة جدولة - {{doctorName}}",
       "dateLabel": "اختر تاريخاً جديداً",
       "timeSlotLabel": "اختر الوقت المناسب",
       "cancel": "إلغاء",
-      "confirmReschedule": "تأكيد إعادة الجدولة"
+      "confirmReschedule": "تأكيد إعادة الجدولة",
+      "rescheduling": "جارٍ إعادة الجدولة..."
     },
     "error": {
       "rating": "تعذر إرسال تقييمك. يرجى المحاولة مرة أخرى."
@@ -505,7 +507,8 @@
     "button": {
       "addRecord": "إضافة سجل سريري",
       "cancel": "إلغاء",
-      "saveRecord": "حفظ السجل الطبي"
+      "saveRecord": "حفظ السجل الطبي",
+      "saving": "جارٍ الحفظ..."
     },
     "selectPatient": "اختر مريضاً",
     "patientInfo": "الجنس: {{gender}} • فصيلة الدم: {{bloodGroup}}",
@@ -659,7 +662,8 @@
     "button": {
       "add": "إضافة قسم",
       "cancel": "إلغاء",
-      "save": "حفظ القسم"
+      "save": "حفظ القسم",
+      "saving": "جارٍ الحفظ..."
     },
     "deleteConfirmation": {
       "title": "حذف القسم",
@@ -689,7 +693,8 @@
     "button": {
       "add": "إضافة طبيب جديد",
       "cancel": "إلغاء",
-      "save": "حفظ الطبيب"
+      "save": "حفظ الطبيب",
+      "saving": "جارٍ الحفظ..."
     },
     "tableHeader": {
       "doctor": "الطبيب",

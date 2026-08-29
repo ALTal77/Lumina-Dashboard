@@ -1,4 +1,4 @@
-const BASE_URL = (import.meta as any).env?.VITE_API_URL || 'http://localhost:4000';
+const BASE_URL = (import.meta as any).env?.VITE_API_URL || '';
 
 const SESSION_STORAGE_KEY = 'lumina-auth-session';
 

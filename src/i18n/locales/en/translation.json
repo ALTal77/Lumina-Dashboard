@@ -385,14 +385,16 @@
       "reviewLabel": "Your Review & Comments",
       "placeholder": "How was the doctor's care, waiting time, and clinic experience?",
       "cancel": "Cancel",
-      "submitRating": "Submit Rating"
+      "submitRating": "Submit Rating",
+      "submitting": "Submitting..."
     },
     "rescheduleModal": {
       "title": "Reschedule Visit - {{doctorName}}",
       "dateLabel": "Select New Date",
       "timeSlotLabel": "Select Preferred Time Slot",
       "cancel": "Cancel",
-      "confirmReschedule": "Confirm Reschedule"
+      "confirmReschedule": "Confirm Reschedule",
+      "rescheduling": "Rescheduling..."
     },
     "error": {
       "rating": "Could not submit your rating. Please try again."
@@ -505,7 +507,8 @@
     "button": {
       "addRecord": "Add Clinical Record",
       "cancel": "Cancel",
-      "saveRecord": "Save Medical Record"
+      "saveRecord": "Save Medical Record",
+      "saving": "Saving..."
     },
     "selectPatient": "Select Patient",
     "patientInfo": "Gender: {{gender}} • Blood Group: {{bloodGroup}}",
@@ -659,7 +662,8 @@
     "button": {
       "add": "Add Department",
       "cancel": "Cancel",
-      "save": "Save Department"
+      "save": "Save Department",
+      "saving": "Saving..."
     },
     "deleteConfirmation": {
       "title": "Delete Department",
@@ -689,7 +693,8 @@
     "button": {
       "add": "Add New Doctor",
       "cancel": "Cancel",
-      "save": "Save Doctor"
+      "save": "Save Doctor",
+      "saving": "Saving..."
     },
     "tableHeader": {
       "doctor": "Doctor",

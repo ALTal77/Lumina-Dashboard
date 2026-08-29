@@ -87,7 +87,7 @@ export const ManageDoctors: React.FC = () => {
         .filter(Boolean),
       bio,
       profilePicture,
-      availableDays: ["Mon", "Tue", "Wed", "Thu", "Fri"],
+      availableDays: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
     };
 
     try {
@@ -410,7 +410,7 @@ export const ManageDoctors: React.FC = () => {
                 disabled={saving}
                 className="px-4 py-1.5 bg-primary text-white text-xs font-bold rounded-lg hover:bg-primary-hover disabled:opacity-60"
               >
-                {saving ? "..." : t("manageDoctors.button.save")}
+                {saving ? t("manageDoctors.button.saving") : t("manageDoctors.button.save")}
               </button>
             </div>
           </form>

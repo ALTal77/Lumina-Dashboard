@@ -196,7 +196,7 @@ export const ManageDepartments: React.FC = () => {
                 disabled={saving}
                 className="px-4 py-1.5 bg-primary text-white text-xs font-bold rounded-lg hover:bg-primary-hover disabled:opacity-60"
               >
-                {saving ? '...' : t('manageDepartments.button.save')}
+                {saving ? t('manageDepartments.button.saving') : t('manageDepartments.button.save')}
               </button>
             </div>
           </form>

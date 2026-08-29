@@ -26,6 +26,7 @@ export const MyAppointments: React.FC = () => {
   const [newTimeSlot, setNewTimeSlot] = useState<string>('09:30 AM - 10:00 AM');
   const [actionError, setActionError] = useState<string>('');
   const [busy, setBusy] = useState(false);
+  const [ratingBusy, setRatingBusy] = useState(false);
 
   // Client side 24h cancellation check
   const isWithinAllowedCancellationWindow = (aptDateStr: string) => {
@@ -38,6 +39,7 @@ export const MyAppointments: React.FC = () => {
   const handleConfirmRating = async () => {
     if (!ratingTarget) return;
     setActionError('');
+    setRatingBusy(true);
     try {
       await addRating({
         appointmentId: ratingTarget.id,
@@ -49,11 +51,13 @@ export const MyAppointments: React.FC = () => {
         comment: reviewComment,
       });
     } catch (err) {
-      setActionError(err instanceof Error ? err.message : t('myAppointments.error.rating'));
+      setActionError(err instanceof Error ? err.message : t('myAppointments.rateModal.submitRating'));
+      setRatingBusy(false);
       return;
     }
     setRatingTarget(null);
     setReviewComment('');
+    setRatingBusy(false);
   };
 
   const handleConfirmReschedule = async () => {
@@ -242,9 +246,10 @@ export const MyAppointments: React.FC = () => {
               </button>
               <button
                 onClick={handleConfirmRating}
-                className="px-4 py-1.5 bg-primary text-white text-xs font-bold rounded-lg hover:bg-primary-hover"
+                disabled={ratingBusy}
+                className="px-4 py-1.5 bg-primary text-white text-xs font-bold rounded-lg hover:bg-primary-hover disabled:opacity-60"
               >
-                {t('myAppointments.rateModal.submit')}
+                {ratingBusy ? t('myAppointments.rateModal.submitting') : t('myAppointments.rateModal.submitRating')}
               </button>
             </div>
           </div>
@@ -304,7 +309,7 @@ export const MyAppointments: React.FC = () => {
                 disabled={busy}
                 className="px-4 py-1.5 bg-primary text-white text-xs font-bold rounded-lg hover:bg-primary-hover disabled:opacity-60"
               >
-                {busy ? '...' : t('myAppointments.rescheduleModal.confirm')}
+                {busy ? t('myAppointments.rescheduleModal.rescheduling') : t('myAppointments.rescheduleModal.confirmReschedule')}
               </button>
             </div>
           </div>
