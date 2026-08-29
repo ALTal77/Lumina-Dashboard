@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from './AuthContext';
 import {
@@ -14,39 +14,22 @@ import {
   Rating,
   AppNotification,
   SystemSettings,
-  AppointmentStatus,
+  UserRole,
 } from '../types';
 
-import {
-  mockPatients,
-  mockDepartments,
-  mockDoctors,
-  mockTimeSlots,
-  mockAppointments,
-  mockPayments,
-  mockConversations,
-  mockMessages,
-  mockMedicalRecords,
-  mockRatings,
-  mockNotifications,
-  mockSystemSettings,
-} from '../data/mockData';
-import {
-  mockPatientsAr,
-  mockDepartmentsAr,
-  mockDoctorsAr,
-  mockTimeSlotsAr,
-  mockAppointmentsAr,
-  mockPaymentsAr,
-  mockConversationsAr,
-  mockMessagesAr,
-  mockMedicalRecordsAr,
-  mockRatingsAr,
-  mockNotificationsAr,
-  mockSystemSettingsAr,
-} from '../data/mockData-ar';
+import { getAllDoctors, getPublicDepartments, getDoctorSlots } from '../api/doctors';
+import { createBooking } from '../api/bookings';
+import * as adminApi from '../api/admin';
+import * as doctorApi from '../api/doctorPortal';
+import * as patientApi from '../api/patientPortal';
+import { getPublicSettings } from '../api/contact';
+import { mockNotifications } from '../data/mockData';
+import { mockNotificationsAr } from '../data/mockData-ar';
+import { ApiError } from '../api/client';
 
 interface DataContextType {
+  isLoading: boolean;
+  error: string | null;
   patients: User[];
   departments: Department[];
   doctors: Doctor[];
@@ -60,6 +43,8 @@ interface DataContextType {
   notifications: AppNotification[];
   systemSettings: SystemSettings;
 
+  refresh: () => Promise<void>;
+
   // Actions
   bookAppointment: (data: {
     patientId: string;
@@ -72,32 +57,32 @@ interface DataContextType {
     paymentMethod: Payment['paymentMethod'];
   }) => Promise<{ appointmentId: string; paymentId: string }>;
 
-  cancelAppointment: (appointmentId: string, reason?: string) => void;
-  modifyAppointment: (appointmentId: string, newDate: string, newTimeSlot: string) => void;
-  confirmAppointment: (appointmentId: string) => void;
-  approveAppointment: (appointmentId: string) => void;
-  rejectAppointment: (appointmentId: string, reason: string) => void;
-  completeAppointment: (appointmentId: string) => void;
+  cancelAppointment: (appointmentId: string, reason?: string) => Promise<void>;
+  modifyAppointment: (appointmentId: string, newDate: string, newTimeSlot: string) => Promise<void>;
+  confirmAppointment: (appointmentId: string) => Promise<void>;
+  approveAppointment: (appointmentId: string) => Promise<void>;
+  rejectAppointment: (appointmentId: string, reason: string) => Promise<void>;
+  completeAppointment: (appointmentId: string) => Promise<void>;
 
-  addDoctor: (doctor: Omit<Doctor, 'id' | 'rating' | 'reviewCount'>) => void;
-  updateDoctor: (doctorOrId: Doctor | string, data?: Partial<Omit<Doctor, 'id' | 'rating' | 'reviewCount'>>) => void;
-  deleteDoctor: (doctorId: string) => void;
+  addDoctor: (doctor: Omit<Doctor, 'id' | 'rating' | 'reviewCount'>) => Promise<void>;
+  updateDoctor: (doctorOrId: Doctor | string, data?: Partial<Omit<Doctor, 'id' | 'rating' | 'reviewCount'>>) => Promise<void>;
+  deleteDoctor: (doctorId: string) => Promise<void>;
 
-  addDepartment: (department: Omit<Department, 'id' | 'doctorCount' | 'createdAt'>) => void;
-  updateDepartment: (departmentOrId: Department | string, data?: Partial<Omit<Department, 'id' | 'doctorCount' | 'createdAt'>>) => void;
-  toggleDepartmentStatus: (departmentId: string, status: Department['status']) => void;
-  deleteDepartment: (departmentId: string) => void;
+  addDepartment: (department: Omit<Department, 'id' | 'doctorCount' | 'createdAt'>) => Promise<void>;
+  updateDepartment: (departmentOrId: Department | string, data?: Partial<Omit<Department, 'id' | 'doctorCount' | 'createdAt'>>) => Promise<void>;
+  toggleDepartmentStatus: (departmentId: string, status: Department['status']) => Promise<void>;
+  deleteDepartment: (departmentId: string) => Promise<void>;
 
-  suspendPatient: (patientId: string) => void;
-  deletePatient: (patientId: string) => void;
+  suspendPatient: (patientId: string) => Promise<void>;
+  deletePatient: (patientId: string) => Promise<void>;
 
-  toggleSlotLock: (slotId: string) => void;
-  togglePatientSuspension: (patientId: string) => void;
-  sendMessage: (conversationId: string, senderId: string, senderRole: 'patient' | 'doctor' | 'admin', receiverId: string, content: string) => void;
-  addMedicalNote: (record: Omit<MedicalRecord, 'id'>) => void;
-  addRating: (rating: Omit<Rating, 'id' | 'date'>) => void;
-  updateDoctorSchedule: (doctorId: string, slots: TimeSlot[]) => void;
-  updateSystemSettings: (settings: Partial<SystemSettings>) => void;
+  toggleSlotLock: (slotId: string) => Promise<void>;
+  togglePatientSuspension: (patientId: string) => Promise<void>;
+  sendMessage: (conversationId: string, senderId: string, senderRole: 'patient' | 'doctor' | 'admin', receiverId: string, content: string) => Promise<void>;
+  addMedicalNote: (record: Omit<MedicalRecord, 'id'>) => Promise<void>;
+  addRating: (rating: Omit<Rating, 'id' | 'date'> & { appointmentId?: string | number }) => Promise<void>;
+  updateDoctorSchedule: (doctorId: string, slots: TimeSlot[]) => Promise<void>;
+  updateSystemSettings: (settings: Partial<SystemSettings>) => Promise<void>;
   markNotificationRead: (notificationId: string) => void;
 }
 
@@ -105,451 +90,511 @@ const DataContext = createContext<DataContextType | undefined>(undefined);
 
 export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { i18n } = useTranslation();
-  const { user: currentUser } = useAuth();
+  const { user: currentUser, role, isAuthenticated } = useAuth();
   const isAr = i18n.language === 'ar';
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const [patients, setPatients] = useState<User[]>(isAr ? mockPatientsAr : mockPatients);
-  const [departments, setDepartments] = useState<Department[]>(isAr ? mockDepartmentsAr : mockDepartments);
-  const [doctors, setDoctors] = useState<Doctor[]>(isAr ? mockDoctorsAr : mockDoctors);
-  const [timeSlots, setTimeSlots] = useState<TimeSlot[]>(isAr ? mockTimeSlotsAr : mockTimeSlots);
-  const [appointments, setAppointments] = useState<Appointment[]>(isAr ? mockAppointmentsAr : mockAppointments);
-  const [payments, setPayments] = useState<Payment[]>(isAr ? mockPaymentsAr : mockPayments);
-  const [conversations, setConversations] = useState<Conversation[]>(isAr ? mockConversationsAr : mockConversations);
-  const [messages, setMessages] = useState<Message[]>(isAr ? mockMessagesAr : mockMessages);
-  const [medicalRecords, setMedicalRecords] = useState<MedicalRecord[]>(isAr ? mockMedicalRecordsAr : mockMedicalRecords);
-  const [ratings, setRatings] = useState<Rating[]>(isAr ? mockRatingsAr : mockRatings);
+  const [patients, setPatients] = useState<User[]>([]);
+  const [departments, setDepartments] = useState<Department[]>([]);
+  const [doctors, setDoctors] = useState<Doctor[]>([]);
+  const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([]);
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [payments, setPayments] = useState<Payment[]>([]);
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [medicalRecords, setMedicalRecords] = useState<MedicalRecord[]>([]);
+  const [ratings, setRatings] = useState<Rating[]>([]);
   const [notifications, setNotifications] = useState<AppNotification[]>(isAr ? mockNotificationsAr : mockNotifications);
-  const [systemSettings, setSystemSettings] = useState<SystemSettings>(isAr ? mockSystemSettingsAr : mockSystemSettings);
+  const [systemSettings, setSystemSettings] = useState<SystemSettings>({
+    hospitalName: 'Lumina Health',
+    contactEmail: 'care@luminahealth.sy',
+    contactPhone: '+963 11 333 4400',
+    allowCancellationHours: 24,
+    maxBookingDaysInAdvance: 60,
+    currencySymbol: '$',
+    enableEmailNotifications: true,
+    enableSmsNotifications: false,
+    autoConfirmBookings: false,
+    maxActiveBookingsPerPatient: 3,
+    defaultConsultationFee: 120,
+    emergencyNoticeBanner: 'Hospital operations normal. No emergency alerts.',
+  });
+
+  const loadedForRef = useRef<string | null>(null);
+
+  interface LoadedData {
+    patients: User[];
+    departments: Department[];
+    doctors: Doctor[];
+    timeSlots: TimeSlot[];
+    appointments: Appointment[];
+    payments: Payment[];
+    conversations: Conversation[];
+    messages: Message[];
+    medicalRecords: MedicalRecord[];
+    ratings: Rating[];
+    systemSettings: SystemSettings;
+  }
+
+  const loadDataForRole = useCallback(async (r: UserRole): Promise<Partial<LoadedData>> => {
+    const result: Partial<LoadedData> = {};
+
+    const [docRes, deptRes, settingsRes] = await Promise.all([
+      getAllDoctors(),
+      getPublicDepartments(),
+      getPublicSettings().catch(() => null),
+    ]);
+    result.doctors = docRes.doctors;
+    result.departments = deptRes.departments;
+    if (settingsRes) result.systemSettings = settingsRes.settings;
+
+    if (r === 'patient') {
+      const [aptRes, recRes, ratRes, convRes, slotRes] = await Promise.all([
+        patientApi.getPatientAppointments(),
+        patientApi.getPatientRecords(),
+        patientApi.getPatientRatings(),
+        patientApi.getPatientConversations(),
+        Promise.all(docRes.doctors.map((d) => getDoctorSlots(d.id).catch(() => ({ slots: [] as TimeSlot[] })))),
+      ]);
+      result.appointments = aptRes.appointments;
+      result.medicalRecords = recRes.records;
+      result.ratings = ratRes.ratings;
+      result.conversations = convRes.conversations;
+      result.timeSlots = slotRes.flatMap((s) => s.slots);
+
+      const msgPromises = convRes.conversations.map((c) =>
+        patientApi.getPatientConversationMessages(c.id).catch(() => ({ messages: [] as Message[] })),
+      );
+      const msgRes = await Promise.all(msgPromises);
+      result.messages = msgRes.flatMap((m) => m.messages);
+    } else if (r === 'doctor') {
+      const [meRes, aptRes, schRes, patRes, recRes, convRes] = await Promise.all([
+        doctorApi.getDoctorMe(),
+        doctorApi.getDoctorAppointments(),
+        doctorApi.getDoctorSchedule(),
+        doctorApi.getDoctorPatients(),
+        doctorApi.getDoctorRecords(),
+        doctorApi.getDoctorConversations(),
+      ]);
+      result.appointments = aptRes.appointments;
+      result.timeSlots = schRes.slots;
+      result.patients = patRes.patients;
+      result.medicalRecords = recRes.records;
+      result.conversations = convRes.conversations;
+
+      const msgPromises = convRes.conversations.map((c) =>
+        doctorApi.getDoctorConversationMessages(c.id).catch(() => ({ messages: [] as Message[] })),
+      );
+      const msgRes = await Promise.all(msgPromises);
+      // Backend returns the doctor's numeric user id as senderId; the dashboard compares
+      // msg.senderId === user.id where user.id is the doctor profile id (doc-N). Normalize
+      // doctor-sent messages so they render on the correct side.
+      const doctorId = meRes.doctor.id;
+      const normalized = msgRes.flatMap((m) =>
+        m.messages.map((msg) =>
+          msg.senderRole === 'doctor' ? { ...msg, senderId: doctorId } : msg,
+        ),
+      );
+      result.messages = normalized;
+    } else if (r === 'admin') {
+      const [patRes, aptRes, payRes, adminDoctors, adminDepts, adminSettings] = await Promise.all([
+        adminApi.getAdminPatients(),
+        adminApi.getAdminAppointments(),
+        adminApi.getAdminPayments(),
+        adminApi.getAdminDoctors(),
+        adminApi.getAdminDepartments(),
+        adminApi.getAdminSettings(),
+      ]);
+      result.patients = patRes.patients;
+      result.appointments = aptRes.appointments;
+      result.payments = payRes.payments;
+      result.doctors = adminDoctors.doctors;
+      result.departments = adminDepts.departments;
+      result.systemSettings = adminSettings.settings;
+      result.conversations = [];
+      result.messages = [];
+      result.timeSlots = [];
+      result.medicalRecords = [];
+      result.ratings = [];
+    }
+
+    return result;
+  }, []);
+
+  const applyData = useCallback((data: Partial<LoadedData>) => {
+    if (data.patients !== undefined) setPatients(data.patients);
+    if (data.departments !== undefined) setDepartments(data.departments);
+    if (data.doctors !== undefined) setDoctors(data.doctors);
+    if (data.timeSlots !== undefined) setTimeSlots(data.timeSlots);
+    if (data.appointments !== undefined) setAppointments(data.appointments);
+    if (data.payments !== undefined) setPayments(data.payments);
+    if (data.conversations !== undefined) setConversations(data.conversations);
+    if (data.messages !== undefined) setMessages(data.messages);
+    if (data.medicalRecords !== undefined) setMedicalRecords(data.medicalRecords);
+    if (data.ratings !== undefined) setRatings(data.ratings);
+    if (data.systemSettings !== undefined) setSystemSettings(data.systemSettings);
+  }, []);
+
+  const load = useCallback(async () => {
+    if (!isAuthenticated || !role) return;
+    setIsLoading(true);
+    setError(null);
+    try {
+      const data = await loadDataForRole(role);
+      applyData(data);
+      loadedForRef.current = role;
+    } catch (e) {
+      setError(e instanceof ApiError ? e.message : 'Failed to load data');
+    } finally {
+      setIsLoading(false);
+    }
+  }, [isAuthenticated, role, loadDataForRole, applyData]);
 
   useEffect(() => {
-    const ar = i18n.language === 'ar';
-    setPatients(ar ? mockPatientsAr : mockPatients);
-    setDepartments(ar ? mockDepartmentsAr : mockDepartments);
-    setDoctors(ar ? mockDoctorsAr : mockDoctors);
-    setTimeSlots(ar ? mockTimeSlotsAr : mockTimeSlots);
-    setAppointments(ar ? mockAppointmentsAr : mockAppointments);
-    setPayments(ar ? mockPaymentsAr : mockPayments);
-    setConversations(ar ? mockConversationsAr : mockConversations);
-    setMessages(ar ? mockMessagesAr : mockMessages);
-    setMedicalRecords(ar ? mockMedicalRecordsAr : mockMedicalRecords);
-    setRatings(ar ? mockRatingsAr : mockRatings);
-    setNotifications(ar ? mockNotificationsAr : mockNotifications);
-    setSystemSettings(ar ? mockSystemSettingsAr : mockSystemSettings);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [i18n.language]);
+    if (isAuthenticated && role) {
+      load();
+    }
+  }, [isAuthenticated, role, load]);
 
-  // 1. Book Appointment
+  const refresh = useCallback(async () => {
+    await load();
+  }, [load]);
+
+  const isAdmin = role === 'admin';
+  const isDoctor = role === 'doctor';
+  const isPatient = role === 'patient';
+
+  // 1. Book Appointment (public endpoint - creates booking linked to logged-in patient)
   const bookAppointment: DataContextType['bookAppointment'] = async (data) => {
-    // TODO: connect to Express API (POST /api/appointments & POST /api/payments)
-    const doctor = doctors.find((d) => d.id === data.doctorId);
-    const aptId = `apt-${Date.now().toString().slice(-6)}`;
-    const payId = `pay-${Date.now().toString().slice(-6)}`;
-    const now = new Date().toISOString().replace('T', ' ').slice(0, 19);
-
-    const newAppointment: Appointment = {
-      id: aptId,
-      patientId: data.patientId,
-      patientName: data.patientName,
-      patientAvatar: patients.find((p) => p.id === data.patientId)?.avatar,
-      patientPhone: patients.find((p) => p.id === data.patientId)?.phone,
+    const res = await createBooking({
       doctorId: data.doctorId,
-      doctorName: doctor ? doctor.name : 'Doctor',
-      doctorSpecialty: doctor ? doctor.specialty : 'Specialist',
-      doctorAvatar: doctor?.profilePicture,
-      departmentName: doctor?.departmentName || 'General',
+      patientName: data.patientName,
+      phone: currentUser?.phone || undefined,
       date: data.date,
       timeSlot: data.timeSlot,
-      status: 'pending',
       notes: data.notes,
-      consultationFee: data.consultationFee,
-      paymentStatus: 'paid',
-      createdAt: now,
-      isRated: false,
-    };
-
-    const newPayment: Payment = {
-      id: payId,
-      appointmentId: aptId,
-      patientId: data.patientId,
-      patientName: data.patientName,
-      doctorId: data.doctorId,
-      doctorName: doctor ? doctor.name : 'Doctor',
-      amount: data.consultationFee,
       paymentMethod: data.paymentMethod,
-      status: 'completed',
-      transactionId: `TXN-${Math.floor(10000000 + Math.random() * 90000000)}`,
-      createdAt: now,
-    };
-
-    const patientNotif: AppNotification = {
-      id: `notif-${Date.now()}`,
-      userId: data.patientId,
-      type: 'appointment',
-      title: 'Appointment Request Submitted',
-      message: `Your booking with ${doctor?.name} on ${data.date} at ${data.timeSlot} is pending doctor confirmation.`,
-      isRead: false,
-      createdAt: now,
-    };
-
-    const doctorNotif: AppNotification = {
-      id: `notif-doc-${Date.now()}`,
-      userId: data.doctorId,
-      type: 'appointment',
-      title: 'New Pending Booking',
-      message: `${data.patientName} requested an appointment for ${data.date} at ${data.timeSlot}.`,
-      isRead: false,
-      createdAt: now,
-    };
-
-    setAppointments((prev) => [newAppointment, ...prev]);
-    setPayments((prev) => [newPayment, ...prev]);
-    setNotifications((prev) => [patientNotif, doctorNotif, ...prev]);
-
-    return { appointmentId: aptId, paymentId: payId };
+      consultationFee: data.consultationFee,
+    });
+    setAppointments((prev) => [res.appointment, ...prev.filter((a) => a.id !== res.appointment.id)]);
+    if (isPatient) {
+      setPayments((prev) => [
+        ...prev,
+        {
+          id: res.paymentId,
+          appointmentId: res.appointmentId,
+          patientId: res.appointment.patientId,
+          patientName: res.appointment.patientName,
+          doctorId: res.appointment.doctorId,
+          doctorName: res.appointment.doctorName,
+          amount: res.appointment.consultationFee,
+          paymentMethod: (data.paymentMethod as Payment['paymentMethod']) || 'Credit Card',
+          status: 'completed',
+          transactionId: res.paymentId,
+          createdAt: res.appointment.createdAt,
+        },
+      ]);
+    }
+    return { appointmentId: res.appointmentId, paymentId: res.paymentId };
   };
 
   // 2. Cancel Appointment
-  const cancelAppointment = (appointmentId: string, reason?: string) => {
-    // TODO: connect to Express API (PUT /api/appointments/:id/cancel)
-    const apt = appointments.find((a) => a.id === appointmentId);
-    if (!apt) return;
-
-    setAppointments((prev) =>
-      prev.map((a) =>
-        a.id === appointmentId
-          ? { ...a, status: 'cancelled', rejectionReason: reason || 'Cancelled by user', paymentStatus: 'refunded' }
-          : a
-      )
-    );
-
-    // Auto refund payment
-    setPayments((prev) =>
-      prev.map((p) => (p.appointmentId === appointmentId ? { ...p, status: 'refunded' } : p))
-    );
-
-    const notif: AppNotification = {
-      id: `notif-${Date.now()}`,
-      userId: apt.patientId,
-      type: 'appointment',
-      title: 'Appointment Cancelled',
-      message: `Appointment #${apt.id} with ${apt.doctorName} was cancelled. Refund processed.`,
-      isRead: false,
-      createdAt: new Date().toISOString(),
-    };
-    setNotifications((prev) => [notif, ...prev]);
-  };
-
-  // 3. Modify Appointment
-  const modifyAppointment = (appointmentId: string, newDate: string, newTimeSlot: string) => {
-    // TODO: connect to Express API (PUT /api/appointments/:id/reschedule)
-    setAppointments((prev) =>
-      prev.map((a) => (a.id === appointmentId ? { ...a, date: newDate, timeSlot: newTimeSlot, status: 'pending' } : a))
-    );
-  };
-
-  // 4. Confirm Appointment
-  const confirmAppointment = (appointmentId: string) => {
-    // TODO: connect to Express API (PUT /api/appointments/:id/confirm)
-    const apt = appointments.find((a) => a.id === appointmentId);
-    setAppointments((prev) =>
-      prev.map((a) => (a.id === appointmentId ? { ...a, status: 'confirmed' } : a))
-    );
-
-    if (apt) {
-      const notif: AppNotification = {
-        id: `notif-${Date.now()}`,
-        userId: apt.patientId,
-        type: 'appointment',
-        title: 'Appointment Confirmed',
-        message: `Dr. ${apt.doctorName} confirmed your appointment for ${apt.date} at ${apt.timeSlot}.`,
-        isRead: false,
-        createdAt: new Date().toISOString(),
-      };
-      setNotifications((prev) => [notif, ...prev]);
+  const cancelAppointment: DataContextType['cancelAppointment'] = async (appointmentId, reason) => {
+    let appointment: Appointment;
+    if (isPatient) {
+      const res = await patientApi.cancelPatientAppointment(appointmentId, reason);
+      appointment = res.appointment;
+    } else if (isAdmin) {
+      const res = await adminApi.cancelAdminAppointment(appointmentId, reason);
+      appointment = res.appointment;
+    } else {
+      throw new ApiError(403, 'You do not have permission to cancel this appointment');
     }
+    setAppointments((prev) => prev.map((a) => (a.id === appointment.id ? appointment : a)));
+  };
+
+  // 3. Modify Appointment (patient)
+  const modifyAppointment: DataContextType['modifyAppointment'] = async (appointmentId, newDate, newTimeSlot) => {
+    if (!isPatient) throw new ApiError(403, 'Only patients can reschedule appointments');
+    const res = await patientApi.modifyPatientAppointment(appointmentId, { date: newDate, timeSlot: newTimeSlot });
+    setAppointments((prev) => prev.map((a) => (a.id === res.appointment.id ? res.appointment : a)));
+  };
+
+  // 4. Confirm/Approve Appointment
+  const confirmAppointment: DataContextType['confirmAppointment'] = async (appointmentId) => {
+    let appointment: Appointment;
+    if (isDoctor) {
+      const res = await doctorApi.approveDoctorAppointment(appointmentId);
+      appointment = res.appointment;
+    } else if (isAdmin) {
+      const res = await adminApi.approveAdminAppointment(appointmentId);
+      appointment = res.appointment;
+    } else {
+      throw new ApiError(403, 'You do not have permission to approve appointments');
+    }
+    setAppointments((prev) => prev.map((a) => (a.id === appointment.id ? appointment : a)));
   };
 
   // 4b. Approve Appointment (alias)
-  const approveAppointment = (appointmentId: string) => {
-    confirmAppointment(appointmentId);
+  const approveAppointment: DataContextType['approveAppointment'] = confirmAppointment;
+
+  // 5. Reject Appointment (doctor)
+  const rejectAppointment: DataContextType['rejectAppointment'] = async (appointmentId, reason) => {
+    if (!isDoctor) throw new ApiError(403, 'Only doctors can reject appointments');
+    const res = await doctorApi.rejectDoctorAppointment(appointmentId, reason);
+    setAppointments((prev) => prev.map((a) => (a.id === res.appointment.id ? res.appointment : a)));
   };
 
-  // 5. Reject Appointment
-  const rejectAppointment = (appointmentId: string, reason: string) => {
-    // TODO: connect to Express API (PUT /api/appointments/:id/reject)
-    const apt = appointments.find((a) => a.id === appointmentId);
-    setAppointments((prev) =>
-      prev.map((a) =>
-        a.id === appointmentId
-          ? { ...a, status: 'rejected', rejectionReason: reason, paymentStatus: 'refunded' }
-          : a
-      )
-    );
-
-    setPayments((prev) =>
-      prev.map((p) => (p.appointmentId === appointmentId ? { ...p, status: 'refunded' } : p))
-    );
-
-    if (apt) {
-      const notif: AppNotification = {
-        id: `notif-${Date.now()}`,
-        userId: apt.patientId,
-        type: 'appointment',
-        title: 'Appointment Rejected',
-        message: `Dr. ${apt.doctorName} rejected your booking request. Reason: ${reason}. Refund issued.`,
-        isRead: false,
-        createdAt: new Date().toISOString(),
-      };
-      setNotifications((prev) => [notif, ...prev]);
-    }
+  // 6. Complete Appointment (doctor)
+  const completeAppointment: DataContextType['completeAppointment'] = async (appointmentId) => {
+    if (!isDoctor) throw new ApiError(403, 'Only doctors can complete appointments');
+    const res = await doctorApi.completeDoctorAppointment(appointmentId);
+    setAppointments((prev) => prev.map((a) => (a.id === res.appointment.id ? res.appointment : a)));
   };
 
-  // 6. Complete Appointment
-  const completeAppointment = (appointmentId: string) => {
-    // TODO: connect to Express API (PUT /api/appointments/:id/complete)
-    setAppointments((prev) =>
-      prev.map((a) => (a.id === appointmentId ? { ...a, status: 'completed' } : a))
-    );
+  // 7. Manage Doctors (admin)
+  const addDoctor: DataContextType['addDoctor'] = async (doctorData) => {
+    if (!isAdmin) throw new ApiError(403, 'Admin access required');
+    const res = await adminApi.createAdminDoctor({
+      name: doctorData.name,
+      email: doctorData.email,
+      specialty: doctorData.specialty,
+      departmentId: doctorData.departmentId,
+      yearsExperience: doctorData.yearsExperience,
+      consultationFee: doctorData.consultationFee,
+      phone: doctorData.phone,
+      languages: doctorData.languages,
+      bio: doctorData.bio,
+      profilePicture: doctorData.profilePicture,
+      availableDays: doctorData.availableDays,
+    });
+    setDoctors((prev) => [res.doctor, ...prev.filter((d) => d.id !== res.doctor.id)]);
+    await refresh();
   };
 
-  // 7. Manage Doctors
-  const addDoctor = (doctorData: Omit<Doctor, 'id' | 'rating' | 'reviewCount'>) => {
-    // TODO: connect to Express API (POST /api/doctors)
-    const newDoc: Doctor = {
-      ...doctorData,
-      id: `doc-${Date.now().toString().slice(-4)}`,
-      rating: 0,
-      reviewCount: 0,
-    };
-    setDoctors((prev) => [newDoc, ...prev]);
-
-    // Update department doctor count
-    setDepartments((prev) =>
-      prev.map((d) => (d.id === doctorData.departmentId ? { ...d, doctorCount: d.doctorCount + 1 } : d))
-    );
+  const updateDoctor: DataContextType['updateDoctor'] = async (doctorOrId, data) => {
+    if (!isAdmin) throw new ApiError(403, 'Admin access required');
+    const id = typeof doctorOrId === 'string' ? doctorOrId : doctorOrId.id;
+    const updates = typeof doctorOrId === 'string' ? data : doctorOrId;
+    if (!updates) throw new ApiError(400, 'No updates provided');
+    const payload: adminApi.DoctorUpdateRequest = {};
+    if (updates.name) payload.name = updates.name;
+    if (updates.email) payload.email = updates.email;
+    if (updates.specialty) payload.specialty = updates.specialty;
+    if (updates.departmentId) payload.departmentId = updates.departmentId;
+    if (updates.yearsExperience != null) payload.yearsExperience = updates.yearsExperience;
+    if (updates.consultationFee != null) payload.consultationFee = updates.consultationFee;
+    if (updates.phone) payload.phone = updates.phone;
+    if (updates.languages) payload.languages = updates.languages;
+    if (updates.bio) payload.bio = updates.bio;
+    if (updates.profilePicture) payload.profilePicture = updates.profilePicture;
+    if (updates.availableDays) payload.availableDays = updates.availableDays;
+    const res = await adminApi.updateAdminDoctor(id, payload);
+    setDoctors((prev) => prev.map((d) => (d.id === res.doctor.id ? res.doctor : d)));
+    await refresh();
   };
 
-  const updateDoctor = (doctorOrId: Doctor | string, data?: Partial<Omit<Doctor, 'id' | 'rating' | 'reviewCount'>>) => {
-    // TODO: connect to Express API (PUT /api/doctors/:id)
-    if (typeof doctorOrId === 'string' && data) {
-      setDoctors((prev) =>
-        prev.map((d) => (d.id === doctorOrId ? { ...d, ...data } : d))
-      );
-    } else if (typeof doctorOrId !== 'string') {
-      setDoctors((prev) => prev.map((d) => (d.id === doctorOrId.id ? doctorOrId : d)));
-    }
-  };
-
-  const deleteDoctor = (doctorId: string) => {
-    // TODO: connect to Express API (DELETE /api/doctors/:id)
-    const docToDelete = doctors.find((d) => d.id === doctorId);
+  const deleteDoctor: DataContextType['deleteDoctor'] = async (doctorId) => {
+    if (!isAdmin) throw new ApiError(403, 'Admin access required');
+    await adminApi.deleteAdminDoctor(doctorId);
     setDoctors((prev) => prev.filter((d) => d.id !== doctorId));
-
-    // Auto cancel active appointments for this doctor
-    setAppointments((prev) =>
-      prev.map((a) =>
-        a.doctorId === doctorId
-          ? { ...a, status: 'cancelled', rejectionReason: 'Doctor profile was removed', paymentStatus: 'refunded' }
-          : a
-      )
-    );
-
-    if (docToDelete?.departmentId) {
-      setDepartments((prev) =>
-        prev.map((d) => (d.id === docToDelete.departmentId ? { ...d, doctorCount: Math.max(0, d.doctorCount - 1) } : d))
-      );
-    }
+    await refresh();
   };
 
-  // 8. Manage Departments
-  const addDepartment = (depData: Omit<Department, 'id' | 'doctorCount' | 'createdAt'>) => {
-    // TODO: connect to Express API (POST /api/departments)
-    const newDep: Department = {
-      ...depData,
-      id: `dep-${Date.now().toString().slice(-4)}`,
-      doctorCount: 0,
-      createdAt: new Date().toISOString().split('T')[0],
-    };
-    setDepartments((prev) => [newDep, ...prev]);
+  // 8. Manage Departments (admin)
+  const addDepartment: DataContextType['addDepartment'] = async (depData) => {
+    if (!isAdmin) throw new ApiError(403, 'Admin access required');
+    const res = await adminApi.createAdminDepartment({
+      name: depData.name,
+      description: depData.description,
+      icon: depData.icon,
+      status: depData.status,
+    });
+    setDepartments((prev) => [...prev.filter((d) => d.id !== res.department.id), res.department]);
+    await refresh();
   };
 
-  const updateDepartment = (departmentOrId: Department | string, data?: Partial<Omit<Department, 'id' | 'doctorCount' | 'createdAt'>>) => {
-    // TODO: connect to Express API (PUT /api/departments/:id)
-    if (typeof departmentOrId === 'string' && data) {
-      setDepartments((prev) =>
-        prev.map((d) => (d.id === departmentOrId ? { ...d, ...data } : d))
-      );
-    } else if (typeof departmentOrId !== 'string') {
-      setDepartments((prev) => prev.map((d) => (d.id === departmentOrId.id ? departmentOrId : d)));
-    }
+  const updateDepartment: DataContextType['updateDepartment'] = async (departmentOrId, data) => {
+    if (!isAdmin) throw new ApiError(403, 'Admin access required');
+    const id = typeof departmentOrId === 'string' ? departmentOrId : departmentOrId.id;
+    const updates = typeof departmentOrId === 'string' ? data : departmentOrId;
+    if (!updates) throw new ApiError(400, 'No updates provided');
+    const payload: Partial<adminApi.DepartmentRequest> = {};
+    if (updates.name) payload.name = updates.name;
+    if (updates.description !== undefined) payload.description = updates.description;
+    if (updates.icon) payload.icon = updates.icon;
+    if (updates.status) payload.status = updates.status;
+    const res = await adminApi.updateAdminDepartment(id, payload);
+    setDepartments((prev) => prev.map((d) => (d.id === res.department.id ? res.department : d)));
+    await refresh();
   };
 
-  const toggleDepartmentStatus = (depId: string, status: Department['status']) => {
-    // TODO: connect to Express API (PATCH /api/departments/:id/status)
-    setDepartments((prev) => prev.map((d) => (d.id === depId ? { ...d, status } : d)));
+  const toggleDepartmentStatus: DataContextType['toggleDepartmentStatus'] = async (departmentId, status) => {
+    if (!isAdmin) throw new ApiError(403, 'Admin access required');
+    const res = await adminApi.toggleDepartmentStatus(departmentId, status);
+    setDepartments((prev) => prev.map((d) => (d.id === res.department.id ? res.department : d)));
+    await refresh();
   };
 
-  // 9. Manage Patients
-  const suspendPatient = (patientId: string) => {
-    // TODO: connect to Express API (PATCH /api/patients/:id/suspend)
-    setPatients((prev) =>
-      prev.map((p) => (p.id === patientId ? { ...p, status: p.status === 'suspended' ? 'active' : 'suspended' } : p))
-    );
+  const deleteDepartment: DataContextType['deleteDepartment'] = async (departmentId) => {
+    if (!isAdmin) throw new ApiError(403, 'Admin access required');
+    await adminApi.deleteAdminDepartment(departmentId);
+    setDepartments((prev) => prev.filter((d) => d.id !== departmentId));
+    await refresh();
   };
 
-  const deletePatient = (patientId: string) => {
-    // TODO: connect to Express API (DELETE /api/patients/:id)
+  // 9. Manage Patients (admin)
+  const suspendPatient: DataContextType['suspendPatient'] = async (patientId) => {
+    if (!isAdmin) throw new ApiError(403, 'Admin access required');
+    const res = await adminApi.suspendPatient(patientId);
+    setPatients((prev) => prev.map((p) => (p.id === res.patient.id ? res.patient : p)));
+  };
+
+  const togglePatientSuspension: DataContextType['togglePatientSuspension'] = suspendPatient;
+
+  const deletePatient: DataContextType['deletePatient'] = async (patientId) => {
+    if (!isAdmin) throw new ApiError(403, 'Admin access required');
+    await adminApi.deleteAdminPatient(patientId);
     setPatients((prev) => prev.filter((p) => p.id !== patientId));
   };
 
   // 10. Messages
-  const sendMessage = (conversationId: string, senderId: string, senderRole: 'patient' | 'doctor' | 'admin', receiverId: string, content: string) => {
-    // TODO: connect to Express API (POST /api/messages)
-    const conv = conversations.find((c) => c.id === conversationId);
-    const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    const newMsg: Message = {
-      id: `msg-${Date.now()}`,
-      conversationId,
-      senderId,
-      senderName: currentUser.name,
-      senderRole,
-      senderAvatar: currentUser.avatar,
-      receiverId,
-      receiverName: conv?.participantName || 'Recipient',
-      content,
-      isRead: false,
-      sentAt: now,
-    };
-
-    setMessages((prev) => [...prev, newMsg]);
-
-    // Update the conversation preview (last message + timestamp)
+  const sendMessage: DataContextType['sendMessage'] = async (conversationId, senderId, senderRole, receiverId, content) => {
+    let message: Message;
+    if (isPatient && senderRole === 'patient') {
+      const res = await patientApi.sendPatientMessage(conversationId, content);
+      message = res.message;
+    } else if (isDoctor && senderRole === 'doctor') {
+      const res = await doctorApi.sendDoctorMessage(conversationId, content);
+      // Normalize doctor senderId to the doctor profile id so the UI sides it correctly.
+      message = res.message.senderRole === 'doctor' && currentUser ? { ...res.message, senderId: currentUser.id } : res.message;
+    } else {
+      // TODO: BACKEND-MISSING — admin messaging requires an admin messaging endpoint.
+      throw new ApiError(501, 'Messaging for this role is not yet implemented on the backend');
+    }
+    setMessages((prev) => [...prev, message]);
     setConversations((prev) =>
       prev.map((c) =>
         c.id === conversationId
-          ? { ...c, lastMessage: content, lastMessageTime: now }
-          : c
-      )
+          ? {
+              ...c,
+              lastMessage: message.content,
+              lastMessageTime: message.sentAt,
+              unreadCount: 0,
+            }
+          : c,
+      ),
     );
   };
 
-  // 11. Add Medical Note
-  const addMedicalNote = (record: Omit<MedicalRecord, 'id'>) => {
-    // TODO: connect to Express API (POST /api/medical-records)
-    const newRecord: MedicalRecord = {
-      ...record,
-      id: `rec-${Date.now()}`,
-    };
-    setMedicalRecords((prev) => [newRecord, ...prev]);
+  // 11. Add Medical Note (doctor)
+  const addMedicalNote: DataContextType['addMedicalNote'] = async (record) => {
+    if (!isDoctor) throw new ApiError(403, 'Only doctors can add medical records');
+    const res = await doctorApi.addDoctorRecord(record.patientId, {
+      diagnosis: record.diagnosis,
+      prescription: record.prescription,
+      note: record.note,
+    });
+    setMedicalRecords((prev) => [res.record, ...prev]);
   };
 
-  // 12. Add Doctor Rating
-  const addRating = (ratingData: Omit<Rating, 'id' | 'date'>) => {
-    // TODO: connect to Express API (POST /api/ratings)
-    const newRating: Rating = {
-      ...ratingData,
-      id: `rat-${Date.now()}`,
-      date: new Date().toISOString().split('T')[0],
-    };
-    setRatings((prev) => [newRating, ...prev]);
-
-    // Recalculate doctor rating
-    const docRatings = [...ratings, newRating].filter((r) => r.doctorId === ratingData.doctorId);
-    const avg = docRatings.reduce((sum, r) => sum + r.stars, 0) / docRatings.length;
-
-    setDoctors((prev) =>
-      prev.map((d) => (d.id === ratingData.doctorId ? { ...d, rating: Number(avg.toFixed(1)), reviewCount: docRatings.length } : d))
-    );
-
-    // Mark appointment as rated
+  // 12. Add Doctor Rating (patient)
+  const addRating: DataContextType['addRating'] = async (ratingData) => {
+    if (!isPatient) throw new ApiError(403, 'Only patients can rate appointments');
+    if (ratingData.appointmentId == null) {
+      // TODO: BACKEND-MISSING — the patient ratings endpoint requires appointmentId, but the
+      // current rating UI does not always pass it. Backend needs an endpoint that rates by
+      // doctor without an associated booking, OR callers must supply appointmentId.
+      throw new ApiError(400, 'appointmentId is required to submit a rating');
+    }
+    const res = await patientApi.addPatientRating({
+      appointmentId: ratingData.appointmentId,
+      stars: ratingData.stars,
+      comment: ratingData.comment,
+    });
+    setRatings((prev) => [res.rating, ...prev]);
     setAppointments((prev) =>
-      prev.map((a) => (a.doctorId === ratingData.doctorId && a.patientId === ratingData.patientId ? { ...a, isRated: true } : a))
+      prev.map((a) =>
+        a.doctorId === ratingData.doctorId && a.patientId === ratingData.patientId
+          ? { ...a, isRated: true }
+          : a,
+      ),
     );
   };
 
   // 13. Update Doctor Schedule
-  const updateDoctorSchedule = (doctorId: string, slots: TimeSlot[]) => {
-    // TODO: connect to Express API (PUT /api/doctors/:id/schedule)
-    setTimeSlots((prev) => {
-      const remaining = prev.filter((s) => s.doctorId !== doctorId);
-      return [...remaining, ...slots];
-    });
+  const updateDoctorSchedule: DataContextType['updateDoctorSchedule'] = async () => {
+    // TODO: BACKEND-MISSING — there is no bulk schedule update endpoint. Only per-slot
+    // toggling is supported via PATCH /api/doctor/schedule/:slotId/toggle-lock.
+    throw new ApiError(501, 'Bulk schedule editing is not yet implemented on the backend. Use individual slot lock/unlock instead.');
   };
 
-  // 14. Toggle Slot Lock
-  const toggleSlotLock = (slotId: string) => {
+  // 14. Toggle Slot Lock (doctor)
+  const toggleSlotLock: DataContextType['toggleSlotLock'] = async (slotId) => {
+    if (!isDoctor) throw new ApiError(403, 'Only doctors can manage their schedule');
+    const res = await doctorApi.toggleSlotLock(slotId);
     setTimeSlots((prev) =>
-      prev.map((s) => (s.id === slotId ? { ...s, isLocked: !s.isLocked } : s))
+      prev.map((s) => (s.id === res.slot.id ? res.slot : s)),
     );
   };
 
-  // 15. Toggle Patient Suspension
-  const togglePatientSuspension = (patientId: string) => {
-    setPatients((prev) =>
-      prev.map((p) => (p.id === patientId ? { ...p, status: p.status === 'suspended' ? 'active' : 'suspended' } : p))
-    );
+  // 16. System Settings (admin)
+  const updateSystemSettings: DataContextType['updateSystemSettings'] = async (settings) => {
+    if (!isAdmin) throw new ApiError(403, 'Admin access required');
+    const res = await adminApi.updateAdminSettings(settings);
+    setSystemSettings(res.settings);
   };
 
-  // 16. Delete Department
-  const deleteDepartment = (departmentId: string) => {
-    setDepartments((prev) => prev.filter((d) => d.id !== departmentId));
-  };
-
-  // 17. System Settings
-  const updateSystemSettings = (settings: Partial<SystemSettings>) => {
-    // TODO: connect to Express API (PUT /api/admin/settings)
-    setSystemSettings((prev) => ({ ...prev, ...settings }));
-  };
-
-  // 15. Notification
+  // 15. Notification (local only — no backend endpoint yet)
   const markNotificationRead = (notifId: string) => {
     setNotifications((prev) => prev.map((n) => (n.id === notifId ? { ...n, isRead: true } : n)));
   };
 
-  return (
-    <DataContext.Provider
-      value={{
-        patients,
-        departments,
-        doctors,
-        timeSlots,
-        appointments,
-        payments,
-        conversations,
-        messages,
-        medicalRecords,
-        ratings,
-        notifications,
-        systemSettings,
-        bookAppointment,
-        cancelAppointment,
-        modifyAppointment,
-        confirmAppointment,
-        approveAppointment,
-        rejectAppointment,
-        completeAppointment,
-        addDoctor,
-        updateDoctor,
-        deleteDoctor,
-        addDepartment,
-        updateDepartment,
-        toggleDepartmentStatus,
-        suspendPatient,
-        deletePatient,
-        sendMessage,
-        addMedicalNote,
-        addRating,
-        updateDoctorSchedule,
-        toggleSlotLock,
-        togglePatientSuspension,
-        deleteDepartment,
-        updateSystemSettings,
-        markNotificationRead,
-      }}
-    >
-      {children}
-    </DataContext.Provider>
-  );
+  const value: DataContextType = {
+    isLoading,
+    error,
+    patients,
+    departments,
+    doctors,
+    timeSlots,
+    appointments,
+    payments,
+    conversations,
+    messages,
+    medicalRecords,
+    ratings,
+    // No backend notifications endpoint exists yet; keep the mock so the bell UI works.
+    notifications,
+    systemSettings,
+    refresh,
+    bookAppointment,
+    cancelAppointment,
+    modifyAppointment,
+    confirmAppointment,
+    approveAppointment,
+    rejectAppointment,
+    completeAppointment,
+    addDoctor,
+    updateDoctor,
+    deleteDoctor,
+    addDepartment,
+    updateDepartment,
+    toggleDepartmentStatus,
+    suspendPatient,
+    deletePatient,
+    sendMessage,
+    addMedicalNote,
+    addRating,
+    updateDoctorSchedule,
+    toggleSlotLock,
+    togglePatientSuspension,
+    deleteDepartment,
+    updateSystemSettings,
+    markNotificationRead,
+  };
+
+  return <DataContext.Provider value={value}>{children}</DataContext.Provider>;
 };
 
 export const useData = () => {

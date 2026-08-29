@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Plus } from "lucide-react";
+import { Plus, AlertTriangle } from "lucide-react";
 import { useData } from "../../context/DataContext";
 import { useAuth } from "../../context/AuthContext";
 import { Modal } from "../../components/shared/Modal";
@@ -24,6 +24,8 @@ export const DoctorPatients: React.FC = () => {
   const [diagnosis, setDiagnosis] = useState<string>("");
   const [prescription, setPrescription] = useState<string>("");
   const [clinicalNotes, setClinicalNotes] = useState<string>("");
+  const [recordError, setRecordError] = useState<string>("");
+  const [saving, setSaving] = useState<boolean>(false);
 
   const activePatient =
     patientList.find((p) => p.id === selectedPatientId) || patientList[0];
@@ -31,27 +33,33 @@ export const DoctorPatients: React.FC = () => {
     (r: any) => r.patientId === selectedPatientId,
   );
 
-  const handleCreateRecord = (e: React.FormEvent) => {
+  const handleCreateRecord = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!diagnosis || !activePatient) return;
-
-    addMedicalNote({
-      patientId: activePatient.id,
-      patientName: activePatient.name,
-      doctorId: user.id,
-      doctorName: user.name,
-      doctorSpecialty:
-        (user as unknown as Doctor).specialty || "General Practice",
-      date: new Date().toISOString().split("T")[0],
-      diagnosis,
-      prescription,
-      note: clinicalNotes,
-    });
-
-    setShowAddRecordModal(false);
-    setDiagnosis("");
-    setPrescription("");
-    setClinicalNotes("");
+    setRecordError("");
+    setSaving(true);
+    try {
+      await addMedicalNote({
+        patientId: activePatient.id,
+        patientName: activePatient.name,
+        doctorId: user.id,
+        doctorName: user.name,
+        doctorSpecialty:
+          (user as unknown as Doctor).specialty || "General Practice",
+        date: new Date().toISOString().split("T")[0],
+        diagnosis,
+        prescription,
+        note: clinicalNotes,
+      });
+      setShowAddRecordModal(false);
+      setDiagnosis("");
+      setPrescription("");
+      setClinicalNotes("");
+    } catch (err) {
+      setRecordError(err instanceof Error ? err.message : "Failed to save record");
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -184,6 +192,11 @@ export const DoctorPatients: React.FC = () => {
           title={t("doctorPatients.modal.title", { name: activePatient?.name })}
         >
           <form onSubmit={handleCreateRecord} className="space-y-4">
+            {recordError && (
+              <div className="p-3 bg-danger-bg text-danger border border-danger-bg rounded-xl text-xs font-bold flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4" /> {recordError}
+              </div>
+            )}
             <div>
               <label className="block text-xs font-semibold text-muted mb-1">
                 {t("doctorPatients.modal.diagnosisLabel")}
@@ -234,9 +247,10 @@ export const DoctorPatients: React.FC = () => {
               </button>
               <button
                 type="submit"
-                className="px-4 py-1.5 bg-primary text-white text-xs font-bold rounded-lg hover:bg-primary-hover"
+                disabled={saving}
+                className="px-4 py-1.5 bg-primary text-white text-xs font-bold rounded-lg hover:bg-primary-hover disabled:opacity-60"
               >
-                {t("doctorPatients.button.saveRecord")}
+                {saving ? "..." : t("doctorPatients.button.saveRecord")}
               </button>
             </div>
           </form>

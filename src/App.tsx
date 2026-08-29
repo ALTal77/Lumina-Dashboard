@@ -1,7 +1,7 @@
 import React from 'react';
-import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { HashRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import './i18n/i18n';
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { DataProvider } from './context/DataContext';
 
 // Layout
@@ -37,6 +37,21 @@ import { RevenuePayments } from './pages/admin/RevenuePayments';
 import { ReportsAnalytics } from './pages/admin/ReportsAnalytics';
 import { SystemSettingsPage } from './pages/admin/SystemSettingsPage';
 
+const RequireAuth: React.FC = () => {
+  const { isAuthenticated, isRestoring } = useAuth();
+  if (isRestoring) {
+    return (
+      <div className="min-h-screen bg-surface flex items-center justify-center">
+        <span className="w-8 h-8 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+      </div>
+    );
+  }
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+  return <Outlet />;
+};
+
 export function App() {
   return (
     <AuthProvider>
@@ -47,35 +62,36 @@ export function App() {
             <Route path="/login" element={<LoginPage />} />
 
             {/* App Dashboard Shell */}
-            <Route path="/" element={<AppShell />}>
+            <Route path="/" element={<RequireAuth />}>
               <Route index element={<Navigate to="/login" replace />} />
+              <Route element={<AppShell />}>
+                {/* Patient Routes */}
+                <Route path="patient/dashboard" element={<PatientDashboard />} />
+                <Route path="patient/departments" element={<BrowseDepartments />} />
+                <Route path="patient/doctors" element={<DoctorListing />} />
+                <Route path="patient/book" element={<BookAppointmentFlow />} />
+                <Route path="patient/appointments" element={<MyAppointments />} />
+                <Route path="patient/messages" element={<PatientMessages />} />
+                <Route path="patient/profile" element={<PatientProfile />} />
 
-              {/* Patient Routes */}
-              <Route path="patient/dashboard" element={<PatientDashboard />} />
-              <Route path="patient/departments" element={<BrowseDepartments />} />
-              <Route path="patient/doctors" element={<DoctorListing />} />
-              <Route path="patient/book" element={<BookAppointmentFlow />} />
-              <Route path="patient/appointments" element={<MyAppointments />} />
-              <Route path="patient/messages" element={<PatientMessages />} />
-              <Route path="patient/profile" element={<PatientProfile />} />
+                {/* Doctor Routes */}
+                <Route path="doctor/dashboard" element={<DoctorDashboard />} />
+                <Route path="doctor/appointments" element={<DoctorAppointments />} />
+                <Route path="doctor/schedule" element={<DoctorSchedule />} />
+                <Route path="doctor/patients" element={<DoctorPatients />} />
+                <Route path="doctor/messages" element={<DoctorMessages />} />
+                <Route path="doctor/profile" element={<DoctorProfilePage />} />
 
-              {/* Doctor Routes */}
-              <Route path="doctor/dashboard" element={<DoctorDashboard />} />
-              <Route path="doctor/appointments" element={<DoctorAppointments />} />
-              <Route path="doctor/schedule" element={<DoctorSchedule />} />
-              <Route path="doctor/patients" element={<DoctorPatients />} />
-              <Route path="doctor/messages" element={<DoctorMessages />} />
-              <Route path="doctor/profile" element={<DoctorProfilePage />} />
-
-              {/* Admin Routes */}
-              <Route path="admin/dashboard" element={<AdminDashboard />} />
-              <Route path="admin/doctors" element={<ManageDoctors />} />
-              <Route path="admin/departments" element={<ManageDepartments />} />
-              <Route path="admin/appointments" element={<MonitorAppointments />} />
-              <Route path="admin/patients" element={<ManagePatients />} />
-              <Route path="admin/payments" element={<RevenuePayments />} />
-              <Route path="admin/reports" element={<ReportsAnalytics />} />
-              <Route path="admin/settings" element={<SystemSettingsPage />} />
+                {/* Admin Routes */}
+                <Route path="admin/dashboard" element={<AdminDashboard />} />
+                <Route path="admin/doctors" element={<ManageDoctors />} />
+                <Route path="admin/departments" element={<ManageDepartments />} />
+                <Route path="admin/appointments" element={<MonitorAppointments />} />
+                <Route path="admin/patients" element={<ManagePatients />} />
+                <Route path="admin/payments" element={<RevenuePayments />} />
+                <Route path="admin/reports" element={<ReportsAnalytics />} />
+                <Route path="admin/settings" element={<SystemSettingsPage />} />
+              </Route>
             </Route>
 
             {/* Fallback Catch-all */}

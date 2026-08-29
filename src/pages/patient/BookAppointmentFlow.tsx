@@ -14,6 +14,7 @@ import {
   Wallet,
   Download,
   Printer,
+  AlertTriangle,
 } from "lucide-react";
 import { useData } from "../../context/DataContext";
 import { useAuth } from "../../context/AuthContext";
@@ -57,6 +58,7 @@ export const BookAppointmentFlow: React.FC = () => {
     appointmentId: string;
     paymentId: string;
   } | null>(null);
+  const [bookingError, setBookingError] = useState<string>("");
 
   // E-Invoice print/export target
   const invoiceRef = useRef<HTMLDivElement>(null);
@@ -80,23 +82,31 @@ export const BookAppointmentFlow: React.FC = () => {
   const handleExecuteMockPayment = async () => {
     if (!selectedDoctor || !selectedSlot) return;
     setIsProcessing(true);
+    setBookingError("");
 
     // Simulate 1.2s mock payment gateway delay
     setTimeout(async () => {
-      const res = await bookAppointment({
-        patientId: user.id,
-        patientName: user.name,
-        doctorId: selectedDoctor.id,
-        date: selectedDate,
-        timeSlot: `${selectedSlot.startTime} - ${selectedSlot.endTime}`,
-        notes,
-        consultationFee: selectedDoctor.consultationFee,
-        paymentMethod,
-      });
+      try {
+        const res = await bookAppointment({
+          patientId: user.id,
+          patientName: user.name,
+          doctorId: selectedDoctor.id,
+          date: selectedDate,
+          timeSlot: `${selectedSlot.startTime} - ${selectedSlot.endTime}`,
+          notes,
+          consultationFee: selectedDoctor.consultationFee,
+          paymentMethod,
+        });
 
-      setBookingResult(res);
-      setIsProcessing(false);
-      setStep(4);
+        setBookingResult(res);
+        setStep(4);
+      } catch (err) {
+        setBookingError(
+          err instanceof Error ? err.message : "Booking failed. Please try again.",
+        );
+      } finally {
+        setIsProcessing(false);
+      }
     }, 1200);
   };
 
@@ -414,6 +424,12 @@ export const BookAppointmentFlow: React.FC = () => {
               {t("bookAppointmentFlow.step3.sslBadge")}
             </span>
           </div>
+
+          {bookingError && (
+            <div className="p-3 bg-danger-bg text-danger border border-danger-bg rounded-xl text-xs font-bold flex items-center gap-2">
+              <AlertTriangle className="w-4 h-4" /> {bookingError}
+            </div>
+          )}
 
           {/* Fee Total Banner */}
           <div className="p-4 bg-primary text-white rounded-xl flex items-center justify-between">

@@ -17,10 +17,35 @@ export const DoctorAppointments: React.FC = () => {
   // Rejection Modal State
   const [rejectingTarget, setRejectingTarget] = useState<Appointment | null>(null);
   const [rejectReason, setRejectReason] = useState<string>('');
+  const [actionError, setActionError] = useState<string>('');
 
-  const handleConfirmRejection = () => {
+  const handleApprove = async (id: string) => {
+    setActionError('');
+    try {
+      await approveAppointment(id);
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : 'Failed to approve');
+    }
+  };
+
+  const handleComplete = async (id: string) => {
+    setActionError('');
+    try {
+      await completeAppointment(id);
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : 'Failed to mark completed');
+    }
+  };
+
+  const handleConfirmRejection = async () => {
     if (!rejectingTarget || !rejectReason.trim()) return;
-    rejectAppointment(rejectingTarget.id, rejectReason.trim());
+    setActionError('');
+    try {
+      await rejectAppointment(rejectingTarget.id, rejectReason.trim());
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : 'Failed to reject');
+      return;
+    }
     setRejectingTarget(null);
     setRejectReason('');
   };
@@ -38,6 +63,12 @@ export const DoctorAppointments: React.FC = () => {
           {t('doctorAppointments.requestCount', { count: myAppointments.length })}
         </span>
       </div>
+
+      {actionError && (
+        <div className="p-3 bg-danger-bg text-danger border border-danger-bg rounded-xl text-xs font-bold flex items-center gap-2">
+          <AlertCircle className="w-4 h-4" /> {actionError}
+        </div>
+      )}
 
       <div className="space-y-4">
         {myAppointments.map((apt) => (
@@ -69,7 +100,7 @@ export const DoctorAppointments: React.FC = () => {
               {apt.status === 'pending' && (
                 <>
                   <button
-                    onClick={() => approveAppointment(apt.id)}
+                    onClick={() => handleApprove(apt.id)}
                     className="px-3.5 py-1.5 bg-success hover:brightness-90 text-white text-xs font-bold rounded-xl transition-colors flex items-center gap-1 shadow-xs"
                   >
                     <CheckCircle2 className="w-3.5 h-3.5" /> {t('doctorAppointments.button.approve')}
@@ -85,7 +116,7 @@ export const DoctorAppointments: React.FC = () => {
 
               {apt.status === 'confirmed' && (
                 <button
-                  onClick={() => completeAppointment(apt.id)}
+                  onClick={() => handleComplete(apt.id)}
                   className="px-4 py-1.5 bg-primary hover:bg-primary-hover text-white text-xs font-bold rounded-xl transition-colors shadow-xs"
                 >
                   {t('doctorAppointments.button.markCompleted')}
@@ -105,6 +136,11 @@ export const DoctorAppointments: React.FC = () => {
           subtitle={t('doctorAppointments.rejectModal.subtitle')}
         >
           <div className="space-y-4">
+            {actionError && (
+              <div className="p-3 bg-danger-bg text-danger border border-danger-bg rounded-xl text-xs font-bold flex items-center gap-2">
+                <AlertCircle className="w-4 h-4" /> {actionError}
+              </div>
+            )}
             <div>
               <label className="block text-xs font-semibold text-muted mb-1">
                 {t('doctorAppointments.rejectModal.reasonLabel')}

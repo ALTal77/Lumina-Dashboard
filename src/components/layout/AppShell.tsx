@@ -5,11 +5,10 @@ import { Bell, Globe, X } from "lucide-react";
 import { Sidebar } from "./Sidebar";
 import { useAuth } from "../../context/AuthContext";
 import { useData } from "../../context/DataContext";
-import { UserRole } from "../../types";
 
 export const AppShell: React.FC = () => {
   const { t } = useTranslation();
-  const { role, loginAs, dir, toggleRTL, user } = useAuth();
+  const { role, dir, toggleRTL, user } = useAuth();
   const { notifications, markNotificationRead } = useData();
   const navigate = useNavigate();
   const location = useLocation();
@@ -17,13 +16,6 @@ export const AppShell: React.FC = () => {
   const [showNotifications, setShowNotifications] = useState(false);
 
   const unreadCount = notifications.filter((n) => !n.isRead).length;
-
-  const handleRoleSwitch = (newRole: UserRole) => {
-    loginAs(newRole);
-    if (newRole === "patient") navigate("/patient/dashboard");
-    else if (newRole === "doctor") navigate("/doctor/dashboard");
-    else if (newRole === "admin") navigate("/admin/dashboard");
-  };
 
   const getPageTitle = () => {
     const path = location.pathname;

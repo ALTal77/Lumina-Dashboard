@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { CalendarCheck, Clock, DollarSign, CheckCircle2 } from "lucide-react";
+import { CalendarCheck, Clock, DollarSign, CheckCircle2, AlertCircle } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { useData } from "../../context/DataContext";
 import { StatCard } from "../../components/shared/StatCard";
@@ -14,6 +14,26 @@ export const DoctorDashboard: React.FC = () => {
     t: (key: string, options?: any) => string;
   };
   const navigate = useNavigate();
+
+  const [actionError, setActionError] = React.useState<string>("");
+
+  const handleApprove = async (id: string) => {
+    setActionError("");
+    try {
+      await approveAppointment(id);
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : "Failed to approve");
+    }
+  };
+
+  const handleComplete = async (id: string) => {
+    setActionError("");
+    try {
+      await completeAppointment(id);
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : "Failed to mark completed");
+    }
+  };
 
   const doctorSpecialty =
     doctors.find((d) => d.id === user.id)?.specialty ?? "";
@@ -75,6 +95,12 @@ export const DoctorDashboard: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {actionError && (
+        <div className="p-3 bg-danger-bg text-danger border border-danger-bg rounded-xl text-xs font-bold flex items-center gap-2">
+          <AlertCircle className="w-4 h-4" /> {actionError}
+        </div>
+      )}
 
       {/* Doctor KPI Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -151,7 +177,7 @@ export const DoctorDashboard: React.FC = () => {
                 </div>
                 <div className="flex items-center gap-2 self-end sm:self-center">
                   <button
-                    onClick={() => approveAppointment(req.id)}
+                    onClick={() => handleApprove(req.id)}
                     className="px-3 py-1.5 bg-success hover:brightness-90 text-white font-bold rounded-lg transition-colors flex items-center gap-1"
                   >
                     <CheckCircle2 className="w-3.5 h-3.5" />{" "}
@@ -214,7 +240,7 @@ export const DoctorDashboard: React.FC = () => {
                 </div>
 
                 <button
-                  onClick={() => completeAppointment(apt.id)}
+                  onClick={() => handleComplete(apt.id)}
                   className="px-3 py-1.5 bg-primary hover:bg-primary-hover text-white text-xs font-bold rounded-lg transition-colors shadow-xs"
                 >
                   {t("doctorDashboard.button.markCompleted")}

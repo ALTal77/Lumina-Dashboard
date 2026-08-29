@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Clock, Lock, Unlock, CheckCircle } from 'lucide-react';
+import { Clock, Lock, Unlock, AlertCircle } from 'lucide-react';
 import { useData } from '../../context/DataContext';
 import { useAuth } from '../../context/AuthContext';
 
@@ -9,7 +9,18 @@ export const DoctorSchedule: React.FC = () => {
   const { timeSlots, toggleSlotLock } = useData();
   const { t } = useTranslation();
 
+  const [actionError, setActionError] = React.useState<string>('');
+
   const mySlots = timeSlots.filter((s) => s.doctorId === user.id);
+
+  const handleToggleLock = async (slotId: string) => {
+    setActionError('');
+    try {
+      await toggleSlotLock(slotId);
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : 'Failed to toggle slot');
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -24,6 +35,12 @@ export const DoctorSchedule: React.FC = () => {
           {t('doctorSchedule.activeSlots', { count: mySlots.length })}
         </span>
       </div>
+
+      {actionError && (
+        <div className="p-3 bg-danger-bg text-danger border border-danger-bg rounded-xl text-xs font-bold flex items-center gap-2">
+          <AlertCircle className="w-4 h-4" /> {actionError}
+        </div>
+      )}
 
       <div className="bg-surface rounded-2xl border border-border p-5 space-y-4">
         <h3 className="text-sm font-bold text-heading ">
@@ -46,7 +63,7 @@ export const DoctorSchedule: React.FC = () => {
               </div>
 
               <button
-                onClick={() => toggleSlotLock(slot.id)}
+                onClick={() => handleToggleLock(slot.id)}
                 className={`p-1.5 rounded-lg border text-xs font-bold transition-colors ${
                   slot.isLocked
                     ? 'bg-pending-bg text-pending border-pending-bg'

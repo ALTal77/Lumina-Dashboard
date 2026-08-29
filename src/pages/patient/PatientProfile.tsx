@@ -1,25 +1,49 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { User, Phone, Mail, MapPin, Calendar, FileText, Save, CheckCircle } from 'lucide-react';
+import { User, Phone, Mail, MapPin, Calendar, FileText, Save, CheckCircle, AlertTriangle } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { updatePatientMe } from '../../api/patientPortal';
+import { ApiError } from '../../api/client';
 import { FileUploadMock } from '../../components/shared/FileUploadMock';
 import { AppImage } from '../../components/shared/AppImage';
 
 export const PatientProfile: React.FC = () => {
   const { t } = useTranslation();
-  const { user } = useAuth();
+  const { user, updateUser } = useAuth();
 
   const [name, setName] = useState(user.name);
-  const [phone, setPhone] = useState(user.phone || '+1 (555) 234-5678');
-  const [address, setAddress] = useState(user.address || '742 Evergreen Terrace, Springfield');
-  const [dob, setDob] = useState(user.dob || '1992-05-14');
-  const [gender, setGender] = useState<'Male' | 'Female' | 'Other'>(user.gender || 'Female');
+  const [phone, setPhone] = useState(user.phone || '');
+  const [address, setAddress] = useState(user.address || '');
+  const [dob, setDob] = useState(user.dob || '');
+  const [gender, setGender] = useState<'Male' | 'Female' | 'Other'>(user.gender || 'Other');
   const [savedSuccess, setSavedSuccess] = useState(false);
+  const [error, setError] = useState('');
+  const [saving, setSaving] = useState(false);
 
-  const handleSave = (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSavedSuccess(true);
-    setTimeout(() => setSavedSuccess(false), 3000);
+    setError('');
+    setSaving(true);
+    try {
+      const res = await updatePatientMe({
+        name: name.trim(),
+        phone: phone.trim(),
+        dob: dob.trim(),
+        address: address.trim(),
+      });
+      updateUser({
+        name: res.patient.name,
+        phone: res.patient.phone,
+        dob: res.patient.dob,
+        address: res.patient.address,
+      });
+      setSavedSuccess(true);
+      setTimeout(() => setSavedSuccess(false), 3000);
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : 'Failed to save profile');
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -44,6 +68,12 @@ export const PatientProfile: React.FC = () => {
         {savedSuccess && (
           <div className="p-3 bg-success-bg text-success border border-success-bg rounded-xl text-xs font-bold flex items-center gap-2">
             <CheckCircle className="w-4 h-4" /> {t('patientProfile.successMessage')}
+          </div>
+        )}
+
+        {error && (
+          <div className="p-3 bg-danger-bg text-danger border border-danger-bg rounded-xl text-xs font-bold flex items-center gap-2">
+            <AlertTriangle className="w-4 h-4" /> {error}
           </div>
         )}
 
@@ -99,9 +129,10 @@ export const PatientProfile: React.FC = () => {
         <div className="pt-4 border-t border-border flex justify-end">
           <button
             type="submit"
-            className="px-5 py-2.5 bg-primary hover:bg-primary-hover text-white text-xs font-bold rounded-xl transition-colors shadow-xs flex items-center gap-2"
+            disabled={saving}
+            className="px-5 py-2.5 bg-primary hover:bg-primary-hover text-white text-xs font-bold rounded-xl transition-colors shadow-xs flex items-center gap-2 disabled:opacity-60"
           >
-            <Save className="w-4 h-4" /> {t('patientProfile.button.save')}
+            <Save className="w-4 h-4" /> {saving ? t('patientProfile.saving') : t('patientProfile.button.save')}
           </button>
         </div>
       </form>

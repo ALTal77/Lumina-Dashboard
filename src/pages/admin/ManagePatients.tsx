@@ -1,17 +1,43 @@
-import React from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { Trash2, AlertTriangle } from "lucide-react";
 import { useData } from "../../context/DataContext";
 import { Patient } from "../../types";
 import { AppImage } from "../../components/shared/AppImage";
+import { Modal } from "../../components/shared/Modal";
 
 export const ManagePatients: React.FC = () => {
   const { t } = useTranslation() as {
     t: (key: string, options?: any) => string;
   };
-  const { patients, togglePatientSuspension } = useData();
+  const { patients, togglePatientSuspension, deletePatient } = useData();
+
+  const [deleteTarget, setDeleteTarget] = useState<Patient | null>(null);
+  const [error, setError] = useState("");
 
   // Cast patients to Patient[] so TS recognizes the bloodGroup field
   const patientList = patients as unknown as Patient[];
+
+  const handleToggleSuspend = async (p: Patient) => {
+    setError("");
+    try {
+      await togglePatientSuspension(p.id);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to update status");
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!deleteTarget) return;
+    setError("");
+    try {
+      await deletePatient(String(deleteTarget.id));
+      setDeleteTarget(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to delete patient");
+      setDeleteTarget(null);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -30,6 +56,11 @@ export const ManagePatients: React.FC = () => {
       </div>
 
       <div className="bg-surface rounded-2xl border border-border shadow-xs overflow-hidden">
+        {error && (
+          <div className="p-3 bg-danger-bg text-danger border-b border-danger-bg text-xs font-bold flex items-center gap-2">
+            <AlertTriangle className="w-4 h-4" /> {error}
+          </div>
+        )}
         <div className="overflow-x-auto">
           <table className="w-full text-left rtl:text-right text-xs text-muted">
             <thead className="bg-page uppercase text-[10px] font-bold text-muted border-b border-border">
@@ -85,18 +116,27 @@ export const ManagePatients: React.FC = () => {
                     </span>
                   </td>
                   <td className="p-3 text-right rtl:text-left">
-                    <button
-                      onClick={() => togglePatientSuspension(p.id)}
-                      className={`px-3 py-1 rounded text-xs font-bold transition-colors ${
-                        p.status === "suspended"
-                          ? "bg-success text-white hover:brightness-90"
-                          : "bg-danger-bg text-danger hover:bg-danger-bg border border-danger-bg"
-                      }`}
-                    >
-                      {p.status === "suspended"
-                        ? t("managePatients.button.reactivate")
-                        : t("managePatients.button.suspend")}
-                    </button>
+                    <div className="flex items-center justify-end gap-2">
+                      <button
+                        onClick={() => handleToggleSuspend(p)}
+                        className={`px-3 py-1 rounded text-xs font-bold transition-colors ${
+                          p.status === "suspended"
+                            ? "bg-success text-white hover:brightness-90"
+                            : "bg-danger-bg text-danger hover:bg-danger-bg border border-danger-bg"
+                        }`}
+                      >
+                        {p.status === "suspended"
+                          ? t("managePatients.button.reactivate")
+                          : t("managePatients.button.suspend")}
+                      </button>
+                      <button
+                        onClick={() => setDeleteTarget(p)}
+                        className="p-1.5 text-muted hover:text-danger hover:bg-danger-bg rounded-lg"
+                        title={t("managePatients.button.delete")}
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -104,6 +144,40 @@ export const ManagePatients: React.FC = () => {
           </table>
         </div>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {deleteTarget && (
+        <Modal
+          isOpen={!!deleteTarget}
+          onClose={() => setDeleteTarget(null)}
+          title={t("managePatients.deleteConfirmation.title")}
+        >
+          <div className="space-y-4">
+            {error && (
+              <div className="p-3 bg-danger-bg text-danger border border-danger-bg rounded-xl text-xs font-bold flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4" /> {error}
+              </div>
+            )}
+            <p className="text-xs text-muted">
+              {t("managePatients.deleteConfirmation.message", { name: deleteTarget.name })}
+            </p>
+            <div className="pt-3 border-t border-border flex justify-end gap-2">
+              <button
+                onClick={() => setDeleteTarget(null)}
+                className="px-3 py-1.5 bg-neutral-bg text-heading text-xs font-bold rounded-lg"
+              >
+                {t("managePatients.button.cancel")}
+              </button>
+              <button
+                onClick={handleDelete}
+                className="px-4 py-1.5 bg-danger text-white text-xs font-bold rounded-lg hover:brightness-90"
+              >
+                {t("managePatients.deleteConfirmation.confirm")}
+              </button>
+            </div>
+          </div>
+        </Modal>
+      )}
     </div>
   );
 };

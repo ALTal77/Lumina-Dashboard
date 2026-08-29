@@ -3,17 +3,11 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { User, Lock, LogIn, Eye, EyeOff, Globe } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
-import { UserRole } from "../../types";
+import { ApiError } from "../../api/client";
 import fullLogo from "../../assets/images/full.png";
 
-const CREDENTIALS: { email: string; password: string; role: UserRole }[] = [
-  { email: "admin@lumina.com", password: "admin123", role: "admin" },
-  { email: "dr.vance@hospital.org", password: "doctor123", role: "doctor" },
-  { email: "sarah@example.com", password: "patient123", role: "patient" },
-];
-
 export const LoginPage: React.FC = () => {
-  const { loginAs, dir, toggleRTL } = useAuth();
+  const { login, dir, toggleRTL } = useAuth();
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -23,7 +17,7 @@ export const LoginPage: React.FC = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
@@ -34,20 +28,17 @@ export const LoginPage: React.FC = () => {
 
     setLoading(true);
 
-    setTimeout(() => {
-      const match = CREDENTIALS.find(
-        (c) =>
-          c.email === email.trim().toLowerCase() && c.password === password,
-      );
-
-      if (match) {
-        loginAs(match.role);
-        navigate(`/${match.role}/dashboard`);
+    try {
+      const user = await login(email.trim(), password);
+      navigate(`/${user.role}/dashboard`);
+    } catch (err) {
+      if (err instanceof ApiError) {
+        setError(err.message);
       } else {
         setError(t("login.form.error"));
-        setLoading(false);
       }
-    }, 800);
+      setLoading(false);
+    }
   };
 
   return (

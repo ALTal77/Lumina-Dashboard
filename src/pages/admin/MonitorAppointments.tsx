@@ -10,6 +10,25 @@ export const MonitorAppointments: React.FC = () => {
 
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [actionError, setActionError] = useState<string>('');
+
+  const handleApprove = async (id: string) => {
+    setActionError('');
+    try {
+      await approveAppointment(id);
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : 'Failed to approve');
+    }
+  };
+
+  const handleCancel = async (id: string) => {
+    setActionError('');
+    try {
+      await cancelAppointment(id, 'Emergency Admin Cancellation');
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : 'Failed to cancel');
+    }
+  };
 
   const filteredAppointments = appointments.filter((apt) => {
     if (statusFilter !== 'all' && apt.status !== statusFilter) return false;
@@ -57,6 +76,12 @@ export const MonitorAppointments: React.FC = () => {
         </div>
       </div>
 
+      {actionError && (
+        <div className="p-3 bg-danger-bg text-danger border border-danger-bg rounded-xl text-xs font-bold flex items-center gap-2">
+          <AlertTriangle className="w-4 h-4" /> {actionError}
+        </div>
+      )}
+
       <div className="bg-surface rounded-2xl border border-border shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left rtl:text-right text-xs text-muted">
@@ -93,7 +118,7 @@ export const MonitorAppointments: React.FC = () => {
                   <td className="p-3 text-right rtl:text-left">
                     {apt.status === 'pending' && (
                       <button
-                        onClick={() => approveAppointment(apt.id)}
+                        onClick={() => handleApprove(apt.id)}
                         className="px-2.5 py-1 bg-success text-white font-bold rounded hover:brightness-90 mr-1"
                       >
                         {t('monitorAppointments.button.approve')}
@@ -101,7 +126,7 @@ export const MonitorAppointments: React.FC = () => {
                     )}
                     {(apt.status === 'pending' || apt.status === 'confirmed') && (
                       <button
-                        onClick={() => cancelAppointment(apt.id, 'Emergency Admin Cancellation')}
+                        onClick={() => handleCancel(apt.id)}
                         className="px-2.5 py-1 bg-danger text-white font-bold rounded hover:brightness-90"
                       >
                         {t('monitorAppointments.button.overrideCancel')}

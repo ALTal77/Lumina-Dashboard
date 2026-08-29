@@ -393,6 +393,9 @@
       "timeSlotLabel": "Select Preferred Time Slot",
       "cancel": "Cancel",
       "confirmReschedule": "Confirm Reschedule"
+    },
+    "error": {
+      "rating": "Could not submit your rating. Please try again."
     }
   },
   "doctorProfile": {
@@ -442,7 +445,8 @@
       "fileUpload": "Upload Insurance Card or Medical ID Document"
     },
     "button": {
-      "save": "Save Profile Updates"
+      "save": "Save Profile Updates",
+      "saving": "Saving..."
     }
   },
   "doctorDashboard": {
@@ -546,7 +550,8 @@
       "fileUpload": "Update Profile Picture or Medical Practice License (Simulated Multer Upload)"
     },
     "button": {
-      "save": "Save Credentials"
+      "save": "Save Credentials",
+      "saving": "Saving..."
     }
   },
   "doctorMessages": {
@@ -611,7 +616,14 @@
     },
     "button": {
       "reactivate": "Reactivate",
-      "suspend": "Suspend Account"
+      "suspend": "Suspend Account",
+      "delete": "Delete Patient",
+      "cancel": "Cancel"
+    },
+    "deleteConfirmation": {
+      "title": "Delete Patient",
+      "message": "Are you sure you want to permanently delete {{name}}? This action cannot be undone.",
+      "confirm": "Delete"
     }
   },
   "monitorAppointments": {
@@ -649,6 +661,11 @@
       "cancel": "Cancel",
       "save": "Save Department"
     },
+    "deleteConfirmation": {
+      "title": "Delete Department",
+      "message": "Are you sure you want to delete {{name}}? Associated doctors will remain without a department.",
+      "confirm": "Delete"
+    },
     "modal": {
       "addTitle": "Add Hospital Department",
       "editTitle": "Edit {{name}}"
@@ -685,6 +702,11 @@
     "tooltip": {
       "edit": "Edit Doctor Info",
       "delete": "Delete Doctor"
+    },
+    "deleteConfirmation": {
+      "title": "Delete Doctor",
+      "message": "Are you sure you want to delete {{name}}? This will also cancel their pending/confirmed appointments.",
+      "confirm": "Delete"
     },
     "modal": {
       "addTitle": "Add New Medical Doctor",

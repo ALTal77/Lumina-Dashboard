@@ -1,82 +1,45 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import i18n from '../i18n/i18n';
 import { UserRole, User } from '../types';
-import { mockPatients } from '../data/mockData';
+import { login as apiLogin, getMe } from '../api/auth';
+import { setToken, clearToken } from '../api/client';
 
 interface AuthContextType {
   role: UserRole;
   user: User;
   isAuthenticated: boolean;
+  isRestoring: boolean;
   dir: 'ltr' | 'rtl';
-  loginAs: (role: UserRole, customUser?: User) => void;
+  login: (email: string, password: string) => Promise<User>;
   logout: () => void;
   toggleRTL: () => void;
   setDir: (dir: 'ltr' | 'rtl') => void;
+  updateUser: (patch: Partial<User>) => void;
 }
-
-const defaultAdminUser: User = {
-  id: 'admin-001',
-  name: 'Chief Admin (Dr. Arthur Pendelton)',
-  email: 'admin@stjudehospital.org',
-  role: 'admin',
-  avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
-  phone: '+1 (800) 555-0100',
-  status: 'active',
-};
-
-const defaultDoctorUser: User = {
-  id: 'doc-1',
-  name: 'Dr. Robert Vance',
-  email: 'robert.vance@hospital.org',
-  role: 'doctor',
-  avatar: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=300&auto=format&fit=crop&q=80',
-  phone: '+1 (555) 901-2345',
-  status: 'active',
-};
-
-const defaultPatientUser: User = mockPatients[0]; // Sarah Jenkins
 
 // Session persistence: keeps the active role/user/direction across page refreshes.
 const SESSION_STORAGE_KEY = 'lumina-auth-session';
-
-const defaultUserForRole = (role: UserRole): User => {
-  if (role === 'doctor') return defaultDoctorUser;
-  if (role === 'admin') return defaultAdminUser;
-  return defaultPatientUser;
-};
-
-const readStoredSession = (): { role: UserRole; user: User; dir: 'ltr' | 'rtl' } | null => {
-  try {
-    const raw = localStorage.getItem(SESSION_STORAGE_KEY);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw) as { role?: UserRole; user?: User; dir?: 'ltr' | 'rtl' };
-    if (
-      !parsed.role ||
-      !['patient', 'doctor', 'admin'].includes(parsed.role) ||
-      !parsed.user?.id ||
-      parsed.user.role !== parsed.role
-    ) {
-      return null;
-    }
-    return {
-      role: parsed.role,
-      user: parsed.user,
-      dir: parsed.dir === 'rtl' ? 'rtl' : 'ltr',
-    };
-  } catch {
-    return null;
-  }
-};
-
-const storedSession = readStoredSession();
+const TOKEN_STORAGE_KEY = 'lumina-auth-token';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [role, setRole] = useState<UserRole>(storedSession?.role ?? 'patient');
-  const [user, setUser] = useState<User>(storedSession?.user ?? defaultUserForRole(role));
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(true);
-  const [dir, setDirState] = useState<'ltr' | 'rtl'>(storedSession?.dir ?? 'ltr');
+  const [role, setRole] = useState<UserRole>('patient');
+  const [user, setUser] = useState<User | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [isRestoring, setIsRestoring] = useState<boolean>(() => !!localStorage.getItem(TOKEN_STORAGE_KEY));
+  const [dir, setDirState] = useState<'ltr' | 'rtl'>(() => {
+    try {
+      const raw = localStorage.getItem(SESSION_STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed?.dir === 'rtl' || parsed?.dir === 'ltr') return parsed.dir;
+      }
+    } catch {
+      // ignore
+    }
+    return 'ltr';
+  });
 
   useEffect(() => {
     document.documentElement.dir = dir;
@@ -84,27 +47,63 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     document.documentElement.lang = dir === 'rtl' ? 'ar' : 'en';
   }, [dir]);
 
-  // Keep the session in sync with state so a refresh restores the same role/user/direction.
+  // Restore session: if a token exists, validate it against /api/auth/me.
   useEffect(() => {
-    try {
-      localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify({ role, user, dir }));
-    } catch {
-      // Storage unavailable (private mode / quota) - session simply won't persist.
+    const token = localStorage.getItem(TOKEN_STORAGE_KEY);
+    if (!token) {
+      setIsRestoring(false);
+      return;
     }
-  }, [role, user, dir]);
+    let cancelled = false;
+    (async () => {
+      try {
+        const { user: me } = await getMe();
+        if (cancelled) return;
+        setUser(me);
+        setRole(me.role);
+        setIsAuthenticated(true);
+        try {
+          localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify({ role: me.role, user: me, dir }));
+        } catch {
+          // ignore
+        }
+      } catch {
+        if (cancelled) return;
+        clearToken();
+        localStorage.removeItem(SESSION_STORAGE_KEY);
+        setIsAuthenticated(false);
+        setUser(null);
+      } finally {
+        if (!cancelled) setIsRestoring(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  const loginAs = (newRole: UserRole, customUser?: User) => {
-    // TODO: connect to Express API for real JWT token validation (POST /api/auth/login)
-    setRole(newRole);
+  const login = useCallback(async (email: string, password: string): Promise<User> => {
+    const { token, user: loggedInUser } = await apiLogin(email, password);
+    setToken(token);
+    setUser(loggedInUser);
+    setRole(loggedInUser.role);
     setIsAuthenticated(true);
-    setUser(customUser ?? defaultUserForRole(newRole));
-  };
+    try {
+      localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify({ role: loggedInUser.role, user: loggedInUser, dir }));
+    } catch {
+      // Storage unavailable - session won't persist across refresh.
+    }
+    return loggedInUser;
+  }, [dir]);
 
-  const logout = () => {
-    // TODO: connect to Express API (POST /api/auth/logout)
-    setIsAuthenticated(false);
+  const logout = useCallback(() => {
+    clearToken();
     localStorage.removeItem(SESSION_STORAGE_KEY);
-  };
+    setIsAuthenticated(false);
+    setUser(null);
+    setRole('patient');
+  }, []);
 
   const toggleRTL = () => {
     setDirState((prev) => {
@@ -119,17 +118,32 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     i18n.changeLanguage(newDir === 'rtl' ? 'ar' : 'en');
   };
 
+  // Merge updated fields into the in-memory user so the UI reflects profile
+  // changes immediately without requiring a full page reload.
+  const updateUser = useCallback((patch: Partial<User>) => {
+    setUser((prev) => (prev ? { ...prev, ...patch } : prev));
+  }, []);
+
   return (
     <AuthContext.Provider
       value={{
         role,
-        user,
+        user: user ?? ({
+          id: '',
+          name: '',
+          email: '',
+          role,
+          avatar: '',
+          status: 'active',
+        } as User),
         isAuthenticated,
+        isRestoring,
         dir,
-        loginAs,
+        login,
         logout,
         toggleRTL,
         setDir,
+        updateUser,
       }}
     >
       {children}

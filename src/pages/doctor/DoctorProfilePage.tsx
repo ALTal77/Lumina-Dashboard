@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Save, CheckCircle } from "lucide-react";
+import { Save, CheckCircle, AlertTriangle } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
+import { updateDoctorMe } from "../../api/doctorPortal";
+import { ApiError } from "../../api/client";
 import { FileUploadMock } from "../../components/shared/FileUploadMock";
 import { AppImage } from "../../components/shared/AppImage";
 import { Doctor } from "../../types";
@@ -24,11 +26,24 @@ export const DoctorProfilePage: React.FC = () => {
       "Board-certified clinical practitioner with 12+ years of experience.",
   );
   const [savedSuccess, setSavedSuccess] = useState(false);
+  const [error, setError] = useState("");
+  const [saving, setSaving] = useState(false);
 
-  const handleSave = (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSavedSuccess(true);
-    setTimeout(() => setSavedSuccess(false), 3000);
+    setError("");
+    setSaving(true);
+    try {
+      // The doctor portal only supports updating bio and phone. Name, specialty
+      // and fee are managed via the admin panel (PUT /api/admin/doctors/:id).
+      await updateDoctorMe({ bio: bio.trim() });
+      setSavedSuccess(true);
+      setTimeout(() => setSavedSuccess(false), 3000);
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : "Failed to save profile");
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -67,6 +82,12 @@ export const DoctorProfilePage: React.FC = () => {
           <div className="p-3 bg-success-bg text-success border border-success-bg rounded-xl text-xs font-bold flex items-center gap-2">
             <CheckCircle className="w-4 h-4" />{" "}
             {t("doctorProfilePage.successMessage")}
+          </div>
+        )}
+
+        {error && (
+          <div className="p-3 bg-danger-bg text-danger border border-danger-bg rounded-xl text-xs font-bold flex items-center gap-2">
+            <AlertTriangle className="w-4 h-4" /> {error}
           </div>
         )}
 
@@ -139,9 +160,13 @@ export const DoctorProfilePage: React.FC = () => {
         <div className="pt-4 border-t border-border flex justify-end">
           <button
             type="submit"
-            className="px-5 py-2.5 bg-primary hover:bg-primary-hover text-white text-xs font-bold rounded-xl transition-colors shadow-xs flex items-center gap-2"
+            disabled={saving}
+            className="px-5 py-2.5 bg-primary hover:bg-primary-hover text-white text-xs font-bold rounded-xl transition-colors shadow-xs flex items-center gap-2 disabled:opacity-60"
           >
-            <Save className="w-4 h-4" /> {t("doctorProfilePage.button.save")}
+            <Save className="w-4 h-4" />{" "}
+            {saving
+              ? t("doctorProfilePage.button.saving")
+              : t("doctorProfilePage.button.save")}
           </button>
         </div>
       </form>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Plus, Edit2, Trash2, Building2 } from 'lucide-react';
+import { Plus, Edit2, Trash2, Building2, AlertTriangle } from 'lucide-react';
 import { useData } from '../../context/DataContext';
 import { Department } from '../../types';
 import { Modal } from '../../components/shared/Modal';
@@ -12,6 +12,9 @@ export const ManageDepartments: React.FC = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingDept, setEditingDept] = useState<Department | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<Department | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
 
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -24,6 +27,7 @@ export const ManageDepartments: React.FC = () => {
     setDescription('');
     setIcon('Building2');
     setStatus('active');
+    setError('');
     setIsModalOpen(true);
   };
 
@@ -33,17 +37,38 @@ export const ManageDepartments: React.FC = () => {
     setDescription(dept.description);
     setIcon(dept.icon);
     setStatus(dept.status);
+    setError('');
     setIsModalOpen(true);
   };
 
-  const handleSave = (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (editingDept) {
-      updateDepartment(editingDept.id, { name, description, icon, status });
-    } else {
-      addDepartment({ name, description, icon, status });
+    setError('');
+    setSaving(true);
+    try {
+      if (editingDept) {
+        await updateDepartment(editingDept.id, { name, description, icon, status });
+      } else {
+        await addDepartment({ name, description, icon, status });
+      }
+      setIsModalOpen(false);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to save department');
+    } finally {
+      setSaving(false);
     }
-    setIsModalOpen(false);
+  };
+
+  const handleDelete = async () => {
+    if (!deleteTarget) return;
+    setError('');
+    try {
+      await deleteDepartment(deleteTarget.id);
+      setDeleteTarget(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete department');
+      setDeleteTarget(null);
+    }
   };
 
   return (
@@ -97,7 +122,7 @@ export const ManageDepartments: React.FC = () => {
                     <Edit2 className="w-3.5 h-3.5" />
                   </button>
                   <button
-                    onClick={() => deleteDepartment(dept.id)}
+                    onClick={() => setDeleteTarget(dept)}
                     className="p-1.5 text-muted hover:text-danger hover:bg-danger-bg rounded-lg"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
@@ -117,6 +142,12 @@ export const ManageDepartments: React.FC = () => {
           title={editingDept ? t('manageDepartments.modal.editTitle', { name: editingDept.name }) : t('manageDepartments.modal.addTitle')}
         >
           <form onSubmit={handleSave} className="space-y-4 text-xs">
+            {error && (
+              <div className="p-3 bg-danger-bg text-danger border border-danger-bg rounded-xl text-xs font-bold flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4" /> {error}
+              </div>
+            )}
+
             <div>
               <label className="block font-semibold text-heading mb-1">{t('manageDepartments.form.name')}</label>
               <input
@@ -162,12 +193,47 @@ export const ManageDepartments: React.FC = () => {
               </button>
               <button
                 type="submit"
-                className="px-4 py-1.5 bg-primary text-white text-xs font-bold rounded-lg hover:bg-primary-hover"
+                disabled={saving}
+                className="px-4 py-1.5 bg-primary text-white text-xs font-bold rounded-lg hover:bg-primary-hover disabled:opacity-60"
               >
-                {t('manageDepartments.button.save')}
+                {saving ? '...' : t('manageDepartments.button.save')}
               </button>
             </div>
           </form>
+        </Modal>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deleteTarget && (
+        <Modal
+          isOpen={!!deleteTarget}
+          onClose={() => setDeleteTarget(null)}
+          title={t('manageDepartments.deleteConfirmation.title')}
+        >
+          <div className="space-y-4">
+            {error && (
+              <div className="p-3 bg-danger-bg text-danger border border-danger-bg rounded-xl text-xs font-bold flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4" /> {error}
+              </div>
+            )}
+            <p className="text-xs text-muted">
+              {t('manageDepartments.deleteConfirmation.message', { name: deleteTarget.name })}
+            </p>
+            <div className="pt-3 border-t border-border flex justify-end gap-2">
+              <button
+                onClick={() => setDeleteTarget(null)}
+                className="px-3 py-1.5 bg-neutral-bg text-heading text-xs font-bold rounded-lg"
+              >
+                {t('manageDepartments.button.cancel')}
+              </button>
+              <button
+                onClick={handleDelete}
+                className="px-4 py-1.5 bg-danger text-white text-xs font-bold rounded-lg hover:brightness-90"
+              >
+                {t('manageDepartments.deleteConfirmation.confirm')}
+              </button>
+            </div>
+          </div>
         </Modal>
       )}
     </div>

@@ -24,6 +24,8 @@ export const MyAppointments: React.FC = () => {
   const [rescheduleTarget, setRescheduleTarget] = useState<Appointment | null>(null);
   const [newDate, setNewDate] = useState<string>('');
   const [newTimeSlot, setNewTimeSlot] = useState<string>('09:30 AM - 10:00 AM');
+  const [actionError, setActionError] = useState<string>('');
+  const [busy, setBusy] = useState(false);
 
   // Client side 24h cancellation check
   const isWithinAllowedCancellationWindow = (aptDateStr: string) => {
@@ -33,24 +35,51 @@ export const MyAppointments: React.FC = () => {
     return hoursDifference >= systemSettings.allowCancellationHours;
   };
 
-  const handleConfirmRating = () => {
+  const handleConfirmRating = async () => {
     if (!ratingTarget) return;
-    addRating({
-      patientId: user.id,
-      patientName: user.name,
-      patientAvatar: user.avatar,
-      doctorId: ratingTarget.doctorId,
-      stars,
-      comment: reviewComment,
-    });
+    setActionError('');
+    try {
+      await addRating({
+        appointmentId: ratingTarget.id,
+        patientId: user.id,
+        patientName: user.name,
+        patientAvatar: user.avatar,
+        doctorId: ratingTarget.doctorId,
+        stars,
+        comment: reviewComment,
+      });
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : t('myAppointments.error.rating'));
+      return;
+    }
     setRatingTarget(null);
     setReviewComment('');
   };
 
-  const handleConfirmReschedule = () => {
+  const handleConfirmReschedule = async () => {
     if (!rescheduleTarget || !newDate) return;
-    modifyAppointment(rescheduleTarget.id, newDate, newTimeSlot);
-    setRescheduleTarget(null);
+    setActionError('');
+    setBusy(true);
+    try {
+      await modifyAppointment(rescheduleTarget.id, newDate, newTimeSlot);
+      setRescheduleTarget(null);
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : 'Failed to reschedule');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const handleCancel = async (apt: Appointment) => {
+    setActionError('');
+    setBusy(true);
+    try {
+      await cancelAppointment(apt.id, 'Cancelled by patient');
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : 'Failed to cancel');
+    } finally {
+      setBusy(false);
+    }
   };
 
   return (
@@ -66,6 +95,12 @@ export const MyAppointments: React.FC = () => {
           {t('myAppointments.totalCount', { count: myAppointments.length })}
         </span>
       </div>
+
+      {actionError && (
+        <div className="p-3 bg-danger-bg text-danger border border-danger-bg rounded-xl text-xs font-bold flex items-center gap-2">
+          <AlertTriangle className="w-4 h-4" /> {actionError}
+        </div>
+      )}
 
       <div className="space-y-4">
         {myAppointments.length === 0 ? (
@@ -147,8 +182,9 @@ export const MyAppointments: React.FC = () => {
 
                       {canCancel ? (
                         <button
-                          onClick={() => cancelAppointment(apt.id, 'Cancelled by patient')}
-                          className="px-3 py-1.5 bg-danger-bg hover:bg-danger-bg text-danger border border-danger-bg text-xs font-bold rounded-xl transition-colors flex items-center gap-1"
+                          onClick={() => handleCancel(apt)}
+                          disabled={busy}
+                          className="px-3 py-1.5 bg-danger-bg hover:bg-danger-bg text-danger border border-danger-bg text-xs font-bold rounded-xl transition-colors flex items-center gap-1 disabled:opacity-60"
                         >
                           <XCircle className="w-3.5 h-3.5" />
                           <span>{t('myAppointments.button.cancelAppointment')}</span>
@@ -223,6 +259,11 @@ export const MyAppointments: React.FC = () => {
           title={t('myAppointments.rescheduleModal.title', { name: rescheduleTarget.doctorName })}
         >
           <div className="space-y-4">
+            {actionError && (
+              <div className="p-3 bg-danger-bg text-danger border border-danger-bg rounded-xl text-xs font-bold flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4" /> {actionError}
+              </div>
+            )}
             <div>
               <label className="block text-xs font-semibold text-heading mb-1">
                 {t('myAppointments.rescheduleModal.selectDate')}
@@ -260,9 +301,10 @@ export const MyAppointments: React.FC = () => {
               </button>
               <button
                 onClick={handleConfirmReschedule}
-                className="px-4 py-1.5 bg-primary text-white text-xs font-bold rounded-lg hover:bg-primary-hover"
+                disabled={busy}
+                className="px-4 py-1.5 bg-primary text-white text-xs font-bold rounded-lg hover:bg-primary-hover disabled:opacity-60"
               >
-                {t('myAppointments.rescheduleModal.confirm')}
+                {busy ? '...' : t('myAppointments.rescheduleModal.confirm')}
               </button>
             </div>
           </div>

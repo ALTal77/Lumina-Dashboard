@@ -12,15 +12,21 @@ export const DoctorMessages: React.FC = () => {
 
   const [activeConvId, setActiveConvId] = useState<string>(conversations[0]?.id || 'conv-1');
   const [inputText, setInputText] = useState<string>('');
+  const [sendError, setSendError] = useState<string>('');
 
   const activeConv = conversations.find((c) => c.id === activeConvId) || conversations[0];
   const activeMessages = messages.filter((m) => m.conversationId === activeConvId);
 
-  const handleSend = (e: React.FormEvent) => {
+  const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!inputText.trim() || !activeConv) return;
-    sendMessage(activeConv.id, user.id, 'doctor', activeConv.participantId, inputText.trim());
-    setInputText('');
+    try {
+      await sendMessage(activeConv.id, user.id, 'doctor', activeConv.participantId, inputText.trim());
+      setInputText('');
+      setSendError('');
+    } catch (err) {
+      setSendError(err instanceof Error ? err.message : 'Failed to send message');
+    }
   };
 
   return (
@@ -96,21 +102,28 @@ export const DoctorMessages: React.FC = () => {
             })}
           </div>
 
-          <form onSubmit={handleSend} className="p-3 border-t border-border flex gap-2">
-            <input
-              type="text"
-              value={inputText}
-              onChange={(e) => setInputText(e.target.value)}
-              placeholder={t('doctorMessages.inputPlaceholder')}
-              className="flex-1 px-3 py-2 text-xs bg-page border border-border rounded-xl text-heading text-left rtl:text-right placeholder:text-muted focus:outline-none focus:border-primary"
-            />
-            <button
-              type="submit"
-              className="px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded-xl text-xs font-bold transition-colors shadow-xs flex items-center gap-1.5"
-            >
-              <Send className="w-3.5 h-3.5" />
-              <span>{t('doctorMessages.button.send')}</span>
-            </button>
+          <form onSubmit={handleSend} className="p-3 border-t border-border flex flex-col gap-2">
+            {sendError && (
+              <div className="text-[11px] text-danger font-bold bg-danger-bg border border-danger-bg rounded-lg px-2 py-1">
+                {sendError}
+              </div>
+            )}
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={inputText}
+                onChange={(e) => setInputText(e.target.value)}
+                placeholder={t('doctorMessages.inputPlaceholder')}
+                className="flex-1 px-3 py-2 text-xs bg-page border border-border rounded-xl text-heading text-left rtl:text-right placeholder:text-muted focus:outline-none focus:border-primary"
+              />
+              <button
+                type="submit"
+                className="px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded-xl text-xs font-bold transition-colors shadow-xs flex items-center gap-1.5"
+              >
+                <Send className="w-3.5 h-3.5" />
+                <span>{t('doctorMessages.button.send')}</span>
+              </button>
+            </div>
           </form>
         </div>
       ) : (

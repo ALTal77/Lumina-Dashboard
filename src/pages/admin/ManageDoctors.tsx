@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Plus, Edit2, Trash2 } from "lucide-react";
+import { Plus, Edit2, Trash2, AlertTriangle } from "lucide-react";
 import { useData } from "../../context/DataContext";
 import { Doctor } from "../../types";
 import { Modal } from "../../components/shared/Modal";
@@ -17,6 +17,9 @@ export const ManageDoctors: React.FC = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingDoctor, setEditingDoctor] = useState<Doctor | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<Doctor | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
 
   // Form states
   const [name, setName] = useState("");
@@ -62,8 +65,10 @@ export const ManageDoctors: React.FC = () => {
     setIsModalOpen(true);
   };
 
-  const handleSave = (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
+    setSaving(true);
     const deptObj = departments.find((d) => d.id === departmentId);
     const deptName = deptObj ? deptObj.name : "General Care";
 
@@ -85,13 +90,29 @@ export const ManageDoctors: React.FC = () => {
       availableDays: ["Mon", "Tue", "Wed", "Thu", "Fri"],
     };
 
-    if (editingDoctor) {
-      updateDoctor(editingDoctor.id, doctorData);
-    } else {
-      addDoctor(doctorData);
+    try {
+      if (editingDoctor) {
+        await updateDoctor(editingDoctor.id, doctorData);
+      } else {
+        await addDoctor(doctorData);
+      }
+      setIsModalOpen(false);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to save doctor");
+    } finally {
+      setSaving(false);
     }
+  };
 
-    setIsModalOpen(false);
+  const handleDelete = async () => {
+    if (!deleteTarget) return;
+    try {
+      await deleteDoctor(deleteTarget.id);
+      setDeleteTarget(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to delete doctor");
+      setDeleteTarget(null);
+    }
   };
 
   return (
@@ -206,7 +227,7 @@ export const ManageDoctors: React.FC = () => {
                         <Edit2 className="w-3.5 h-3.5" />
                       </button>
                       <button
-                        onClick={() => deleteDoctor(doc.id)}
+                        onClick={() => setDeleteTarget(doc)}
                         className="p-1.5 text-muted hover:text-danger hover:bg-danger-bg rounded-lg transition-colors"
                         title={t("manageDoctors.tooltip.delete")}
                       >
@@ -233,6 +254,12 @@ export const ManageDoctors: React.FC = () => {
           }
         >
           <form onSubmit={handleSave} className="space-y-4 text-xs">
+            {error && (
+              <div className="p-3 bg-danger-bg text-danger border border-danger-bg rounded-xl text-xs font-bold flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4" /> {error}
+              </div>
+            )}
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="block font-semibold text-heading mb-1">
@@ -380,12 +407,47 @@ export const ManageDoctors: React.FC = () => {
               </button>
               <button
                 type="submit"
-                className="px-4 py-1.5 bg-primary text-white text-xs font-bold rounded-lg hover:bg-primary-hover"
+                disabled={saving}
+                className="px-4 py-1.5 bg-primary text-white text-xs font-bold rounded-lg hover:bg-primary-hover disabled:opacity-60"
               >
-                {t("manageDoctors.button.save")}
+                {saving ? "..." : t("manageDoctors.button.save")}
               </button>
             </div>
           </form>
+        </Modal>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deleteTarget && (
+        <Modal
+          isOpen={!!deleteTarget}
+          onClose={() => setDeleteTarget(null)}
+          title={t("manageDoctors.deleteConfirmation.title")}
+        >
+          <div className="space-y-4">
+            {error && (
+              <div className="p-3 bg-danger-bg text-danger border border-danger-bg rounded-xl text-xs font-bold flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4" /> {error}
+              </div>
+            )}
+            <p className="text-xs text-muted">
+              {t("manageDoctors.deleteConfirmation.message", { name: deleteTarget.name })}
+            </p>
+            <div className="pt-3 border-t border-border flex justify-end gap-2">
+              <button
+                onClick={() => setDeleteTarget(null)}
+                className="px-3 py-1.5 bg-neutral-bg text-heading text-xs font-bold rounded-lg"
+              >
+                {t("manageDoctors.button.cancel")}
+              </button>
+              <button
+                onClick={handleDelete}
+                className="px-4 py-1.5 bg-danger text-white text-xs font-bold rounded-lg hover:brightness-90"
+              >
+                {t("manageDoctors.deleteConfirmation.confirm")}
+              </button>
+            </div>
+          </div>
         </Modal>
       )}
     </div>
