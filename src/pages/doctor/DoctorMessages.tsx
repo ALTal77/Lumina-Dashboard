@@ -4,6 +4,7 @@ import { Send, MessageSquare, Search } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useData } from '../../context/DataContext';
 import { Avatar } from '../../components/shared/Avatar';
+import { MessageTimestamp } from '../../components/shared/MessageTimestamp';
 
 export const DoctorMessages: React.FC = () => {
   const { user } = useAuth();
@@ -67,8 +68,8 @@ export const DoctorMessages: React.FC = () => {
             <div className="flex items-center gap-3">
               <Avatar src={activeConv.participantAvatar} name={activeConv.participantName} size="md" status="online" />
               <div>
-                <h3 className="text-xs font-bold text-heading" dir="auto">{activeConv.participantName}</h3>
-                <span className="text-[10px] text-success font-semibold uppercase">
+                <h3 className="text-sm font-bold text-heading" dir="auto">{activeConv.participantName}</h3>
+                <span className="text-xs text-success font-semibold capitalize">
                   {t('doctorMessages.chatHeader.badge')}
                 </span>
               </div>
@@ -89,13 +90,7 @@ export const DoctorMessages: React.FC = () => {
                     }`}
                   >
                     <p className="leading-relaxed" dir="auto">{msg.content}</p>
-                    <span
-                      className={`text-[9px] mt-1 block text-right rtl:text-left ${
-                        isMine ? 'text-primary' : 'text-muted'
-                      }`}
-                    >
-                      {msg.sentAt}
-                    </span>
+                    <MessageTimestamp sentAt={msg.sentAt} isMine={isMine} />
                   </div>
                 </div>
               );

@@ -79,6 +79,7 @@ interface DataContextType {
   toggleSlotLock: (slotId: string) => Promise<void>;
   togglePatientSuspension: (patientId: string) => Promise<void>;
   sendMessage: (conversationId: string, senderId: string, senderRole: 'patient' | 'doctor' | 'admin', receiverId: string, content: string) => Promise<void>;
+  createConversation: (doctorId: string) => Promise<Conversation>;
   addMedicalNote: (record: Omit<MedicalRecord, 'id'>) => Promise<void>;
   addRating: (rating: Omit<Rating, 'id' | 'date'> & { appointmentId?: string | number }) => Promise<void>;
   updateDoctorSchedule: (doctorId: string, slots: TimeSlot[]) => Promise<void>;
@@ -488,6 +489,18 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     );
   };
 
+  // 10b. Create Conversation (patient)
+  const createConversation: DataContextType['createConversation'] = async (doctorId) => {
+    if (!isPatient) throw new ApiError(403, 'Only patients can start conversations');
+    const res = await patientApi.createPatientConversation(doctorId);
+    const conv = res.conversation;
+    setConversations((prev) => {
+      if (prev.some((c) => c.id === conv.id)) return prev;
+      return [conv, ...prev];
+    });
+    return conv;
+  };
+
   // 11. Add Medical Note (doctor)
   const addMedicalNote: DataContextType['addMedicalNote'] = async (record) => {
     if (!isDoctor) throw new ApiError(403, 'Only doctors can add medical records');
@@ -584,6 +597,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     suspendPatient,
     deletePatient,
     sendMessage,
+    createConversation,
     addMedicalNote,
     addRating,
     updateDoctorSchedule,

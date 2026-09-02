@@ -430,9 +430,16 @@
     },
     "inputPlaceholder": "Type message to doctor...",
     "button": {
-      "send": "Send"
+      "send": "Send",
+      "newConversation": "New Chat"
     },
-    "emptyState": "Select a conversation to open thread."
+    "emptyState": "Select a conversation to open thread.",
+    "newConversation": {
+      "title": "Start a Conversation",
+      "searchPlaceholder": "Search doctors...",
+      "noResults": "No doctors found.",
+      "startChat": "Start Chat"
+    }
   },
   "patientProfile": {
     "subtitle": "Patient ID: #{{id}} • Registered Member",

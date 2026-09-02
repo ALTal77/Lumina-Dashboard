@@ -430,9 +430,16 @@
     },
     "inputPlaceholder": "اكتب رسالة للطبيب...",
     "button": {
-      "send": "إرسال"
+      "send": "إرسال",
+      "newConversation": "محادثة جديدة"
     },
-    "emptyState": "اختر محادثة لفتحها."
+    "emptyState": "اختر محادثة لفتحها.",
+    "newConversation": {
+      "title": "بدء محادثة",
+      "searchPlaceholder": "ابحث عن طبيب...",
+      "noResults": "لم يتم العثور على أطباء.",
+      "startChat": "بدء المحادثة"
+    }
   },
   "patientProfile": {
     "subtitle": "معرف المريض: #{{id}} • عضو مسجل",
